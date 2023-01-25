@@ -10,7 +10,7 @@ int main()
     int frameTime;
 
     Game *game = new Game();
-    game->init("Conquest", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 512, 512, false);
+    game->init("Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 800, false);
 
     while (game->running())
     {

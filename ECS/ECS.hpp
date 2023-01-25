@@ -127,6 +127,8 @@ public:
         auto ptr(componentArray[getComponentTypeID<T>()]);
         return *static_cast<T *>(ptr);
     }
+
+    friend std::ostream &operator<<(std::ostream &stream, Entity &entity);
 };
 
 /// @brief Manages all entities of the game

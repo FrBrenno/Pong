@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "Collision.hpp"
 #include "ECS/Components.hpp"
 #include "Game.hpp"
 #include "Map.hpp"
@@ -10,24 +9,16 @@ SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
 Map *map;
 Manager manager;
-std::vector<ColliderComponent *> Game::colliders;
+// std::vector<ColliderComponent *> Game::colliders;
 
-auto& player(manager.addEntity());
-auto& computer(manager.addEntity());
-
-enum groupLabels : std::size_t
-{
-    groupMap,
-    groupPlayers,
-    groupEnemies,
-    groupColliders
-};
+auto &player(manager.addEntity());
 
 Game::Game() {}
 Game::~Game() {}
 
 void Game::init(const char *title, int xpos, int ypos, int height, int width, bool fullscreen)
 {
+
     int flags = 0;
     if (fullscreen)
     {
@@ -41,6 +32,8 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
         window = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
         if (window)
         {
+            windowHeight = height;
+            windowWidth = width;
             std::cout << "Window created!" << std::endl;
         }
         // Create a renderer
@@ -58,11 +51,14 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     }
 
     map = new Map();
-    Map::loadMap("maps/p16x16.map", 16, 16, 32, 1);
+    Map::loadMap(32, 1, windowHeight, windowWidth);
 
-    player.addComponents<TransformComponent>(64, 64);
-    player.addComponents<SpriteComponent>();
+    player.addComponents<TransformComponent>(64, 64, 32, 32, 2);
+    player.addComponents<SpriteComponent>(00);
+    player.addGroup(groupPlayers);
 }
+
+auto &players(manager.getGroup(Game::groupPlayers));
 
 void Game::handleEvents()
 {
@@ -82,24 +78,21 @@ void Game::update()
 {
     manager.refresh();
     manager.update();
-    for (auto cc : colliders)
+    /* for (auto cc : colliders)
     {
         Collision::AABB(soldierA.getComponent<ColliderComponent>(), *cc);
-    }
+    } */
 }
-
-auto& tiles(manager.getGroup(groupMap));
-auto& players(manager.getGroup(groupPlayers));
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
     // Render things here
-    for (auto& t : tiles)
+    /* for (auto &t : tiles)
     {
         t->draw();
-    } 
-    for (auto& p : players)
+    } */
+    for (auto &p : players)
     {
         p->draw();
     }
@@ -117,10 +110,9 @@ void Game::clean()
 
 bool Game::running() { return isRunning; }
 
-void Game::AddTile(int id, int x, int y, int tsize, int tscale)
+void Game::AddTile(int srcX, int srcY, int x, int y, int tsize, int tscale)
 {
-    auto& tile(manager.addEntity());
-    tile.addComponents<TileComponent>(x, y, tsize, tscale, id);
+    auto &tile(manager.addEntity());
+    // tile.addComponents<TileComponent>(x, y, tsize, tscale, "assets/pong_spritesheet.png");
     tile.addGroup(groupMap);
-
 }

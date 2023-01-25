@@ -6,7 +6,7 @@ if [ -f $TMP_FILE ]; then
     NB=$(cat $TMP_FILE | uniq | wc -l)
     if [ $NB -gt 0 ]; then
         echo "Component files has been changed => Recompiling everything..."
-        cat /dev/null > $TMP_FILE
+        rm $TMP_FILE
         make build
     else
         echo "No component file has been changed."
@@ -26,5 +26,4 @@ else
         echo "Creating a single watcher..."
         inotifywait -m -e modify ./ECS/* > $TMP_FILE &
     fi
-    
 fi

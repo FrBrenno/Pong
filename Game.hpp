@@ -37,14 +37,24 @@ public:
     /// @return true is running; false is not running
     bool running();
 
-    static void AddTile(int id, int x, int y, int tsize, int tscale);
+    static void AddTile(int srcX, int srcY, int x, int y, int tsize, int tscale);
+
     static SDL_Renderer *renderer;
     static SDL_Event event;
     static std::vector<ColliderComponent *> colliders;
+    enum groupLabels : std::size_t
+	{
+		groupMap,
+		groupPlayers,
+		groupColliders,
+		groupProjectiles
+	};
 
 private:
     bool isRunning;
     SDL_Window *window;
+    int windowHeight, windowWidth;
+    
 };
 
 #endif /* Game_hpp*/

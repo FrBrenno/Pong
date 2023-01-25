@@ -4,7 +4,8 @@
 #include "../Game.hpp"
 #include "ECS.hpp"
 #include "TransformComponent.hpp"
-#include "ColliderComponent.hpp"
 #include "SpriteComponent.hpp"
 #include "TileComponent.hpp"
-#include "KeyboardController.hpp"
+/*
+#include "ColliderComponent.hpp"-
+#include "KeyboardController.hpp" */
