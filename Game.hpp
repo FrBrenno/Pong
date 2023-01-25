@@ -37,7 +37,7 @@ public:
     /// @return true is running; false is not running
     bool running();
 
-    static void AddTile(int srcX, int srcY, int x, int y, int tsize, int tscale);
+    static void AddTile(int id, int x, int y, int size, int scale);
 
     static SDL_Renderer *renderer;
     static SDL_Event event;
@@ -47,7 +47,7 @@ public:
 		groupMap,
 		groupPlayers,
 		groupColliders,
-		groupProjectiles
+		groupBall
 	};
 
 private:

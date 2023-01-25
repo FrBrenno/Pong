@@ -12,6 +12,8 @@ Manager manager;
 // std::vector<ColliderComponent *> Game::colliders;
 
 auto &player(manager.addEntity());
+auto &computer(manager.addEntity());
+auto &ball(manager.addEntity());
 
 Game::Game() {}
 Game::~Game() {}
@@ -40,7 +42,7 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
         renderer = SDL_CreateRenderer(window, -1, 0);
         if (renderer)
         {
-            SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             std::cout << "Renderer created!" << std::endl;
         }
         isRunning = true;
@@ -51,14 +53,24 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     }
 
     map = new Map();
-    Map::loadMap(32, 1, windowHeight, windowWidth);
+    Map::loadMap(32, 2, windowHeight, windowWidth);
 
-    player.addComponents<TransformComponent>(64, 64, 32, 32, 2);
+    player.addComponents<TransformComponent>(64, 224, 32, 64, 2);
     player.addComponents<SpriteComponent>(00);
     player.addGroup(groupPlayers);
+
+    computer.addComponents<TransformComponent>(windowWidth - 64 - 32, 224, 32, 64, 2);
+    computer.addComponents<SpriteComponent>(10);
+    computer.addGroup(groupPlayers);
+
+    ball.addComponents<TransformComponent>(windowWidth / 2 - 16, windowHeight / 2 - 16);
+    ball.addComponents<SpriteComponent>(02);
+    ball.addGroup(groupBall);
 }
 
 auto &players(manager.getGroup(Game::groupPlayers));
+auto &tiles(manager.getGroup(Game::groupMap));
+auto &balls(manager.getGroup(Game::groupBall));
 
 void Game::handleEvents()
 {
@@ -78,23 +90,23 @@ void Game::update()
 {
     manager.refresh();
     manager.update();
-    /* for (auto cc : colliders)
-    {
-        Collision::AABB(soldierA.getComponent<ColliderComponent>(), *cc);
-    } */
 }
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
     // Render things here
-    /* for (auto &t : tiles)
+    for (auto &t : tiles)
     {
         t->draw();
-    } */
+    }
     for (auto &p : players)
     {
         p->draw();
+    }
+    for (auto &b : balls)
+    {
+        b->draw();
     }
 
     SDL_RenderPresent(renderer);
@@ -110,9 +122,9 @@ void Game::clean()
 
 bool Game::running() { return isRunning; }
 
-void Game::AddTile(int srcX, int srcY, int x, int y, int tsize, int tscale)
+void Game::AddTile(int id, int x, int y, int size, int scale)
 {
     auto &tile(manager.addEntity());
-    // tile.addComponents<TileComponent>(x, y, tsize, tscale, "assets/pong_spritesheet.png");
+    tile.addComponents<TileComponent>(id, x, y, size, scale);
     tile.addGroup(groupMap);
 }

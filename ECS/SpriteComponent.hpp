@@ -2,7 +2,6 @@
 #include "Components.hpp"
 
 #include <SDL2/SDL.h>
-
 class SpriteComponent : public Component
 {
 private:
@@ -15,9 +14,8 @@ public:
     SpriteComponent() = default;
     SpriteComponent(int mSpriteID)
     {
-        texture = TextureManager::LoadTexture("/assets/soldier_a.png");
+        texture = TextureManager::LoadTexture("assets/pong_spritesheet.png");
         spriteID = mSpriteID;
-        
     }
     ~SpriteComponent()
     {
@@ -28,24 +26,15 @@ public:
     {
         transform = &entity->getComponent<TransformComponent>();
 
-        srcRect.x = (int)(spriteID / 10);
-        srcRect.w = 32;
-        if (spriteID == 00 || spriteID == 10)
-        {
-            srcRect.y = 2 * (int)(spriteID % 10);
-            srcRect.h = 64;
-        }
-
-        else
-        {
-            srcRect.y = (int)(spriteID % 10);
-            srcRect.h = 32;
-        }
-
+        srcRect.x = (int)(spriteID / 10)*32;
+        srcRect.y = (int)(spriteID % 10)*32;
+        srcRect.w = transform->width;
+        srcRect.h = transform->height;
+    
         destRect.x = transform->position.x;
         destRect.y = transform->position.y;
-        destRect.h = (transform->height * transform->scale);
-        destRect.w = (transform->width * transform->scale);
+        destRect.h = transform->height * transform->scale;
+        destRect.w = transform->width * transform->scale;
     }
 
     void draw() override

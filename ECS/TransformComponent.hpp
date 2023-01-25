@@ -23,33 +23,23 @@ public:
     }
     TransformComponent(int sc)
     {
-        TransformComponent();
+        position.Zero();
         scale = sc;
     }
     TransformComponent(float x, float y)
     {
-        position = Vector2D(x, y);
+        position.x = x;
+        position.y = y;
     }
-    TransformComponent(float xpos, float ypos, float xvel, float yvel)
+    TransformComponent(float x, float y, int w, int h, int sc)
     {
-        position = Vector2D(xpos, ypos);
-        velocity = Vector2D(xvel, yvel);
-    }
-    TransformComponent(float x, float y, int h, int w, int sc)
-    {
-        position = Vector2D(x, y);
+        position.x = x;
+        position.y = y;
         height = h;
         width = w;
         scale = sc;
     }
-    TransformComponent(float xpos, float ypos, float xvel, float yvel, int h, int w, int sc)
-    {
-        position = Vector2D(xpos, ypos);
-        velocity = Vector2D(xvel, yvel);
-        height = h;
-        width = w;
-        scale = sc;
-    }
+
     void init() override
     {
         velocity.Zero();
