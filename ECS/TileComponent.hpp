@@ -14,7 +14,10 @@ public:
     TileComponent() = default;
 
     ~TileComponent()
-    {};
+    {
+        delete transform;
+        delete sprite;
+    };
 
     TileComponent(int id, int x, int y, int size, int scale)
     {

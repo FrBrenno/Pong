@@ -1,4 +1,5 @@
 #include "Vector2D.hpp"
+#include <cmath>
 
 Vector2D::Vector2D() { x = y = 0.0f; }
 Vector2D::~Vector2D(){};
@@ -21,16 +22,25 @@ Vector2D &Vector2D::Substract(const Vector2D &vec)
     this->y -= vec.y;
     return *this;
 }
-Vector2D &Vector2D::Multiply(const Vector2D &vec)
+
+Vector2D &Vector2D::Multiply(const float &i)
 {
-    this->x *= vec.x;
-    this->y *= vec.y;
+    this->x *= i;
+    this->y *= i;
     return *this;
 }
-Vector2D &Vector2D::Divide(const Vector2D &vec)
+
+Vector2D &Vector2D::Divide(const float &i)
 {
-    this->x /= vec.x;
-    this->y /= vec.y;
+    this->x /= i;
+    this->y /= i;
+    return *this;
+}
+
+Vector2D &Vector2D::operator=(const Vector2D &v1)
+{
+    this->x = v1.x;
+    this->y = v1.y;
     return *this;
 }
 
@@ -42,45 +52,30 @@ Vector2D &operator-(Vector2D &v1, const Vector2D &v2)
 {
     return v1.Substract(v2);
 }
-Vector2D &operator*(Vector2D &v1, const Vector2D &v2)
+Vector2D &operator*(Vector2D &v1, const float &i)
 {
-    return v1.Multiply(v2);
+    return v1.Multiply(i);
 }
-Vector2D &operator/(Vector2D &v1, const Vector2D &v2)
+Vector2D &operator/(Vector2D &v1, const float &i)
 {
-    return v1.Divide(v2);
-}
-
-Vector2D &Vector2D::operator+=(Vector2D &v1)
-{
-    return v1.Add(v1);
-}
-Vector2D &Vector2D::operator-=(Vector2D &v1)
-{
-    return v1.Substract(v1);
-}
-Vector2D &Vector2D::operator*=(Vector2D &v1)
-{
-    return v1.Multiply(v1);
-}
-Vector2D &Vector2D::operator/=(Vector2D &v1)
-{
-    return v1.Divide(v1);
+    return v1.Divide(i);
 }
 
-Vector2D &Vector2D::operator=(Vector2D v1)
+Vector2D &Vector2D::operator+=(const Vector2D &v1)
 {
-    this->x = v1.x;
-    this->y = v1.y;
-    return *this;
+    return this->Add(v1);
 }
-
-Vector2D &Vector2D::operator*(const int &i)
+Vector2D &Vector2D::operator-=(const Vector2D &v1)
 {
-    this->x *= i;
-    this->y *= i;
-
-    return *this;
+    return this->Substract(v1);
+}
+Vector2D &Vector2D::operator*=(const int &i)
+{
+    return this->Multiply(i);
+}
+Vector2D &Vector2D::operator/=(const int &i)
+{
+    return this->Divide(i);
 }
 
 Vector2D &Vector2D::Zero()
@@ -90,8 +85,14 @@ Vector2D &Vector2D::Zero()
     return *this;
 }
 
+Vector2D &Vector2D::Normalize()
+{
+    float norm = sqrt(pow(this->x, 2) + pow(this->y, 2));
+    return this->Divide(norm);
+}
+
 std::ostream &operator<<(std::ostream &stream, const Vector2D &vec)
 {
-    stream << "(" << vec.x << "," << vec.y << ")";
+    stream << "(" << (float)vec.x << "," << (float)vec.y << ")";
     return stream;
 }

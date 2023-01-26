@@ -4,37 +4,30 @@
 #define HEIGHT 32
 #define WIDTH 32
 #define SCALE 1
-#define SPEED 3
+#define SPEED 2
 
 class TransformComponent : public Component
 {
 public:
     Vector2D position;
-    Vector2D velocity;
 
     int height = HEIGHT;
     int width = WIDTH;
     int scale = SCALE;
-    int speed = SPEED;
+
+    ~TransformComponent(){};
 
     TransformComponent()
     {
         position.Zero();
     }
-    TransformComponent(int sc)
-    {
-        position.Zero();
-        scale = sc;
-    }
     TransformComponent(float x, float y)
     {
-        position.x = x;
-        position.y = y;
+        position = Vector2D(x, y);
     }
     TransformComponent(float x, float y, int w, int h, int sc)
     {
-        position.x = x;
-        position.y = y;
+        position = Vector2D(x, y);
         height = h;
         width = w;
         scale = sc;
@@ -42,13 +35,9 @@ public:
 
     void init() override
     {
-        velocity.Zero();
     }
 
-    void update() override
+    void update(int deltaTime) override
     {
-        position += velocity*speed;
     }
-
-
 };

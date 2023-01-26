@@ -1,5 +1,6 @@
 CXX=g++
 FLAGS=-std=c++17 -Wall -Wextra -Wpedantic -D_GNU_SOURCE -Werror=all
+SANITIZERS=-fsanitize=address
 LBLIBS= $(shell pkg-config --libs sdl2 SDL2_image)
 CLASSES=$(wildcard *.hpp)
 OBJECTS=$(CLASSES:.hpp=.o)
@@ -9,7 +10,7 @@ ECS_OBJECTS=$(ECS:.cpp=.o)
 all : run
 
 main: main.cpp $(OBJECTS) $(ECS_OBJECTS)
-	$(CXX) -o $@ $^ $(LBLIBS) $(FLAGS) 
+	$(CXX) -o $@ $^ $(LBLIBS) $(FLAGS) $(SANITIZERS)
 
 %.o: %.cpp %.hpp
 	$(CXX) -c $<
@@ -28,4 +29,5 @@ build:
 
 clean:
 	find . -name \*.o -type f -delete
+	rm ./main
 	

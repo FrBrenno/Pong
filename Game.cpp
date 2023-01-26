@@ -7,6 +7,9 @@
 
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
+int Game::windowHeight;
+int Game::windowWidth;
+bool Game::isRunning = false;
 Map *map;
 Manager manager;
 // std::vector<ColliderComponent *> Game::colliders;
@@ -16,7 +19,13 @@ auto &computer(manager.addEntity());
 auto &ball(manager.addEntity());
 
 Game::Game() {}
-Game::~Game() {}
+Game::~Game()
+{
+    // Clean up SDL resources
+    SDL_DestroyRenderer(renderer);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
+}
 
 void Game::init(const char *title, int xpos, int ypos, int height, int width, bool fullscreen)
 {
@@ -52,18 +61,20 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
         isRunning = false;
     }
 
-    map = new Map();
-    Map::loadMap(32, 2, windowHeight, windowWidth);
+    //map = new Map();
+    //Map::loadMap(32, 2, windowHeight, windowWidth);
 
     player.addComponents<TransformComponent>(64, 224, 32, 64, 2);
     player.addComponents<SpriteComponent>(00);
+    player.addComponents<MouseControlledMovement>(Vector2D(0,1));
     player.addGroup(groupPlayers);
 
     computer.addComponents<TransformComponent>(windowWidth - 64 - 32, 224, 32, 64, 2);
     computer.addComponents<SpriteComponent>(10);
+    computer.addComponents<AIControlledMovement>(Vector2D(0,1), 3);
     computer.addGroup(groupPlayers);
 
-    ball.addComponents<TransformComponent>(windowWidth / 2 - 16, windowHeight / 2 - 16);
+    ball.addComponents<TransformComponent>(windowWidth / 2 - 32, windowHeight / 2 - 32);
     ball.addComponents<SpriteComponent>(02);
     ball.addGroup(groupBall);
 }
@@ -74,39 +85,40 @@ auto &balls(manager.getGroup(Game::groupBall));
 
 void Game::handleEvents()
 {
-    SDL_PollEvent(&event);
-
-    switch (event.type)
+    while (SDL_PollEvent(&event))
     {
-    case SDL_QUIT:
-        isRunning = false;
-        break;
-    default:
-        break;
+        switch (event.type)
+        {
+        case SDL_QUIT:
+            isRunning = false;
+            break;
+        default:
+            break;
+        }
     }
 }
 
-void Game::update()
+void Game::update(int deltaTime)
 {
     manager.refresh();
-    manager.update();
+    manager.update(deltaTime);
 }
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
     // Render things here
-    for (auto &t : tiles)
+    /* for (auto &t : tiles)
     {
         t->draw();
+    } */
+    for (auto &b : balls)
+    {
+        b->draw();
     }
     for (auto &p : players)
     {
         p->draw();
-    }
-    for (auto &b : balls)
-    {
-        b->draw();
     }
 
     SDL_RenderPresent(renderer);
@@ -120,11 +132,11 @@ void Game::clean()
     std::cout << "Game cleaned" << std::endl;
 }
 
-bool Game::running() { return isRunning; }
+
 
 void Game::AddTile(int id, int x, int y, int size, int scale)
 {
-    auto &tile(manager.addEntity());
+    /* auto &tile(manager.addEntity());
     tile.addComponents<TileComponent>(id, x, y, size, scale);
-    tile.addGroup(groupMap);
+    tile.addGroup(groupMap); */
 }

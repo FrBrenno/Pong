@@ -27,21 +27,23 @@ public:
     /// @brief Handle user inputs/events
     void handleEvents();
     /// @brief Update all game objects
-    void update();
+    void update(int deltaTime);
     /// @brief Render objects in the window
     void render();
     /// @brief Destroy the window and the renderer before quitting
     void clean();
 
-    /// @brief Returns true if the game is still running, false otherwise
-    /// @return true is running; false is not running
-    bool running();
+    
 
     static void AddTile(int id, int x, int y, int size, int scale);
 
     static SDL_Renderer *renderer;
     static SDL_Event event;
     static std::vector<ColliderComponent *> colliders;
+    static bool isRunning;
+    static int windowHeight, windowWidth;
+
+     
     enum groupLabels : std::size_t
 	{
 		groupMap,
@@ -51,10 +53,7 @@ public:
 	};
 
 private:
-    bool isRunning;
     SDL_Window *window;
-    int windowHeight, windowWidth;
-    
 };
 
 #endif /* Game_hpp*/

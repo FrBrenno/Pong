@@ -42,7 +42,7 @@ public:
     virtual ~Component(){};
 
     virtual void init(){};
-    virtual void update(){};
+    virtual void update(int deltaTime){};
     virtual void draw(){};
 };
 
@@ -58,11 +58,12 @@ private:
 
 public:
     Entity(Manager &mManager) : manager(mManager){};
+    ~Entity(){};
     /// @brief Updates each component of the entity
-    void update()
+    void update(int deltaTime)
     {
         for (auto &c : components)
-            c->update();
+            c->update(deltaTime);
     };
     /// @brief Draws each component of the entity
     void draw()
@@ -139,11 +140,12 @@ private:
     std::array<std::vector<Entity *>, maxGroups> groupedEntities;
 
 public:
+    ~Manager(){}
     /// @brief Updates each entity of the game
-    void update()
+    void update(int deltaTime)
     {
         for (auto &e : entities)
-            e->update();
+            e->update(deltaTime);
     };
     /// @brief Draw each entity of the game
     void draw()
