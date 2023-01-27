@@ -27,15 +27,11 @@ public:
     /// @brief Handle user inputs/events
     void handleEvents();
     /// @brief Update all game objects
-    void update(int deltaTime);
+    void update();
     /// @brief Render objects in the window
     void render();
     /// @brief Destroy the window and the renderer before quitting
     void clean();
-
-    
-
-    static void AddTile(int id, int x, int y, int size, int scale);
 
     static SDL_Renderer *renderer;
     static SDL_Event event;

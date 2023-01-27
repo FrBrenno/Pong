@@ -5,8 +5,7 @@
 #include "ECS.hpp"
 #include "TransformComponent.hpp"
 #include "SpriteComponent.hpp"
-#include "TileComponent.hpp"
 #include "MovementComponent.hpp"
+#include "ColliderComponent.hpp"
 /*
-#include "ColliderComponent.hpp"-
 #include "KeyboardController.hpp" */

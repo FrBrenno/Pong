@@ -37,7 +37,7 @@ public:
         destRect.w = transform->width * transform->scale;
     }
 
-    void update(int deltaTime) override
+    void update() override
     {
         destRect.x = transform->position.x;
         destRect.y = transform->position.y;

@@ -7,8 +7,6 @@ int main()
 {
     const int FPS = 60;
     const float frameDelay = 1.0f / FPS;
-    float lastFrameTime = 0;
-    float deltaTime = 0;
 
     Game *game = new Game();
     game->init("Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 800, false);
@@ -16,10 +14,8 @@ int main()
     while (game->isRunning)
     {
         float currentTime = SDL_GetTicks() / 1000.0f;
-        deltaTime = currentTime - lastFrameTime;
-        lastFrameTime = currentTime;
 
-        game->update(deltaTime);
+        game->update();
         game->render();
         game->handleEvents();
 

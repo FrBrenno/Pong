@@ -1,8 +1,8 @@
 #include <iostream>
+#include <random>
 
 #include "ECS/Components.hpp"
 #include "Game.hpp"
-#include "Map.hpp"
 #include "TextureManager.hpp"
 
 SDL_Renderer *Game::renderer = nullptr;
@@ -10,9 +10,8 @@ SDL_Event Game::event;
 int Game::windowHeight;
 int Game::windowWidth;
 bool Game::isRunning = false;
-Map *map;
 Manager manager;
-// std::vector<ColliderComponent *> Game::colliders;
+std::vector<ColliderComponent *> Game::colliders;
 
 auto &player(manager.addEntity());
 auto &computer(manager.addEntity());
@@ -61,26 +60,26 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
         isRunning = false;
     }
 
-    //map = new Map();
-    //Map::loadMap(32, 2, windowHeight, windowWidth);
-
     player.addComponents<TransformComponent>(64, 224, 32, 64, 2);
     player.addComponents<SpriteComponent>(00);
-    player.addComponents<MouseControlledMovement>(Vector2D(0,1));
+    player.addComponents<MouseControlledMovement>(Vector2D(0, 1));
+    player.addComponents<ColliderComponent>("player");
     player.addGroup(groupPlayers);
 
     computer.addComponents<TransformComponent>(windowWidth - 64 - 32, 224, 32, 64, 2);
     computer.addComponents<SpriteComponent>(10);
-    computer.addComponents<AIControlledMovement>(Vector2D(0,1), 3);
+    computer.addComponents<AIControlledMovement>(Vector2D(0, 1), 3);
+    computer.addComponents<ColliderComponent>("computer");
     computer.addGroup(groupPlayers);
 
     ball.addComponents<TransformComponent>(windowWidth / 2 - 32, windowHeight / 2 - 32);
     ball.addComponents<SpriteComponent>(02);
+    ball.addComponents<BallMovement>();
+    ball.addComponents<ColliderComponent>("ball");
     ball.addGroup(groupBall);
 }
 
 auto &players(manager.getGroup(Game::groupPlayers));
-auto &tiles(manager.getGroup(Game::groupMap));
 auto &balls(manager.getGroup(Game::groupBall));
 
 void Game::handleEvents()
@@ -98,20 +97,47 @@ void Game::handleEvents()
     }
 }
 
-void Game::update(int deltaTime)
+void Game::update()
 {
     manager.refresh();
-    manager.update(deltaTime);
+    manager.update();
+    for (auto &cc : colliders)
+    {
+        if (cc == &ball.getComponent<ColliderComponent>())
+            continue;
+        else
+        {
+            if (Collision::AABB(ball.getComponent<ColliderComponent>(), *cc))
+            {
+                Vector2D normal = ball.getComponent<ColliderComponent>().getCollisionNormal();
+                if (normal.x > 0) // Obj A is before the Obj B in the x axis
+                {
+                    if (normal.x > normal.y)
+                        ball.getComponent<BallMovement>().velocity.y *= -1; // Top-Bottom
+                    else
+                        ball.getComponent<BallMovement>().velocity.x *= -1; // Right-Left
+                }
+                else if (normal.x == 0)
+                {
+                    ball.getComponent<BallMovement>().velocity.x *= -1;
+                    ball.getComponent<BallMovement>().velocity.y *= -1;
+                }
+                else // Obj A is after the Obj B in the x axis
+                {
+                    if (normal.x > normal.y)                                // Top to Bottom collision
+                        ball.getComponent<BallMovement>().velocity.x *= -1; // Left-Right
+                    else
+                        ball.getComponent<BallMovement>().velocity.y *= -1; // Bottom-Top
+                }
+            }
+        }
+    }
 }
 
 void Game::render()
 {
     SDL_RenderClear(renderer);
     // Render things here
-    /* for (auto &t : tiles)
-    {
-        t->draw();
-    } */
     for (auto &b : balls)
     {
         b->draw();
@@ -130,13 +156,4 @@ void Game::clean()
     SDL_DestroyRenderer(renderer);
     SDL_Quit();
     std::cout << "Game cleaned" << std::endl;
-}
-
-
-
-void Game::AddTile(int id, int x, int y, int size, int scale)
-{
-    /* auto &tile(manager.addEntity());
-    tile.addComponents<TileComponent>(id, x, y, size, scale);
-    tile.addGroup(groupMap); */
 }

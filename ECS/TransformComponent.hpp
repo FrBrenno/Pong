@@ -37,7 +37,7 @@ public:
     {
     }
 
-    void update(int deltaTime) override
+    void update() override
     {
     }
 };

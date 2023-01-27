@@ -2,7 +2,12 @@
 #include <cmath>
 
 Vector2D::Vector2D() { x = y = 0.0f; }
-Vector2D::~Vector2D(){};
+Vector2D::~Vector2D(){}
+
+float Vector2D::norm()
+{
+    return sqrt(pow(x, 2) + pow(y, 2));
+};
 
 Vector2D::Vector2D(float x, float y)
 {
@@ -87,8 +92,7 @@ Vector2D &Vector2D::Zero()
 
 Vector2D &Vector2D::Normalize()
 {
-    float norm = sqrt(pow(this->x, 2) + pow(this->y, 2));
-    return this->Divide(norm);
+    return this->Divide(this->norm());
 }
 
 std::ostream &operator<<(std::ostream &stream, const Vector2D &vec)
