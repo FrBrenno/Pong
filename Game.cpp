@@ -107,27 +107,20 @@ void Game::update()
             continue;
         else
         {
-            if (Collision::AABB(ball.getComponent<ColliderComponent>(), *cc))
+            CollisionType collision;
+            if (Collision::SATCollision(ball.getComponent<ColliderComponent>(), *cc, collision))
             {
-                Vector2D normal = ball.getComponent<ColliderComponent>().getCollisionNormal();
-                if (normal.x > 0) // Obj A is before the Obj B in the x axis
-                {
-                    if (normal.x > normal.y)
-                        ball.getComponent<BallMovement>().velocity.y *= -1; // Top-Bottom
-                    else
-                        ball.getComponent<BallMovement>().velocity.x *= -1; // Right-Left
-                }
-                else if (normal.x == 0)
+                if (collision == CollisionType::LEFT || collision == CollisionType::RIGHT)
                 {
                     ball.getComponent<BallMovement>().velocity.x *= -1;
+                }
+                else if (collision == CollisionType::TOP)
+                {
                     ball.getComponent<BallMovement>().velocity.y *= -1;
                 }
-                else // Obj A is after the Obj B in the x axis
+                else if (collision == CollisionType::BOTTOM)
                 {
-                    if (normal.x > normal.y)                                // Top to Bottom collision
-                        ball.getComponent<BallMovement>().velocity.x *= -1; // Left-Right
-                    else
-                        ball.getComponent<BallMovement>().velocity.y *= -1; // Bottom-Top
+                    ball.getComponent<BallMovement>().velocity.y *= -1;
                 }
             }
         }

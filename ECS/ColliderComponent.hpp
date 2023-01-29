@@ -7,7 +7,6 @@ private:
     TransformComponent *transform;
     SpriteComponent *sprite;
     SDL_Rect colliderBox;
-    Vector2D normal;
     std::string tag;
 
 public:
@@ -20,7 +19,7 @@ public:
             entity->addComponents<TransformComponent>();
 
         transform = &entity->getComponent<TransformComponent>();
-        normal.Zero();
+
         Game::colliders.push_back(this);
     }
 
@@ -33,38 +32,73 @@ public:
     }
 
     SDL_Rect getColliderBox() const { return colliderBox; }
-    Vector2D getCollisionNormal() const { return normal; }
+
     std::string getTag() const { return tag; }
+};
 
-    void setCollisionNormal(ColliderComponent &other)
-    {
-
-        Vector2D vecA = entity->getComponent<TransformComponent>().position;
-        Vector2D vecB = other.entity->getComponent<TransformComponent>().position;
-        normal = vecB - vecA;
-    }
+enum class CollisionType
+{
+    NONE,
+    LEFT,
+    RIGHT,
+    TOP,
+    BOTTOM
 };
 
 class Collision
 {
+
 public:
-    static bool AABB(ColliderComponent &colA, ColliderComponent &colB)
+    static bool SATCollision(ColliderComponent &colA, ColliderComponent &colB, CollisionType &collision)
     {
+        // Get the bounding box of each collider
         SDL_Rect recA = colA.getColliderBox();
         SDL_Rect recB = colB.getColliderBox();
-        if (
-            recA.x + recA.w - 20 >= recB.x &&
-            recB.x + recB.w - 20 >= recA.x &&
-            recA.y + recA.h >= recB.y &&
-            recB.y + recB.h >= recA.y)
+
+        // Calculate the distance between the two bounding boxes on the x and y axes
+        int xDistance = (recA.x + (recA.w / 2)) - (recB.x + (recB.w / 2));
+        int yDistance = (recA.y + (recA.h / 2)) - (recB.y + (recB.h / 2));
+
+        // Calculate the sum of the widths and heights of the two bounding boxes
+        int totalWidth = (recA.w / 2) + (recB.w / 2);
+        int totalHeight = (recA.h / 2) + (recB.h / 2);
+
+        // Check for collision on the x and y axes
+        if (abs(xDistance) < totalWidth && abs(yDistance) < totalHeight)
         {
-            if (colA.entity != colB.entity)
+            // There is a collision
+            int xPenetration = totalWidth - abs(xDistance);
+            int yPenetration = totalHeight - abs(yDistance);
+
+            // Determine the direction of the collision
+            if (xPenetration < yPenetration)
             {
-                colA.setCollisionNormal(colB);
-                return true;
+                // Collision is on the x axis
+                if (xDistance > 0)
+                {
+                    collision = CollisionType::LEFT;
+                }
+                else
+                {
+                    collision = CollisionType::RIGHT;
+                }
             }
+            else
+            {
+                // Collision is on the y axis
+                if (yDistance > 0)
+                {
+                    collision = CollisionType::TOP;
+                }
+                else
+                {
+                    collision = CollisionType::BOTTOM;
+                }
+            }
+            return true;
         }
+
+        // No collision
         return false;
     }
-
 };
