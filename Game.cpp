@@ -110,17 +110,20 @@ void Game::update()
             CollisionType collision;
             if (Collision::SATCollision(ball.getComponent<ColliderComponent>(), *cc, collision))
             {
-                if (collision == CollisionType::LEFT || collision == CollisionType::RIGHT)
+                double currentTime = SDL_GetTicks() / 1000.0;
+                if (currentTime - ball.getComponent<ColliderComponent>().getLastCollisionTime() >
+                    ball.getComponent<ColliderComponent>().getcollisionCooldown())
                 {
-                    ball.getComponent<BallMovement>().velocity.x *= -1;
-                }
-                else if (collision == CollisionType::TOP)
-                {
-                    ball.getComponent<BallMovement>().velocity.y *= -1;
-                }
-                else if (collision == CollisionType::BOTTOM)
-                {
-                    ball.getComponent<BallMovement>().velocity.y *= -1;
+
+                    if (collision == CollisionType::LEFT || collision == CollisionType::RIGHT)
+                    {
+                        ball.getComponent<BallMovement>().velocity.x *= -1;
+                    }
+                    else if (collision == CollisionType::TOP || collision == CollisionType::BOTTOM)
+                    {
+                        ball.getComponent<BallMovement>().velocity.y *= -1;
+                    }
+                    ball.getComponent<ColliderComponent>().setLastCollisionTime(currentTime);
                 }
             }
         }

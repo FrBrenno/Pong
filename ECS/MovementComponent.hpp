@@ -109,5 +109,4 @@ public:
         transform->position.x += velocity.x * speed;
         transform->position.y += velocity.y * speed;
     }
-
 };

@@ -7,6 +7,10 @@ Vector2D::~Vector2D(){}
 float Vector2D::norm()
 {
     return sqrt(pow(x, 2) + pow(y, 2));
+}
+double Vector2D::dot(const Vector2D &other) const
+{
+    return x*other.x + y*other.y;
 };
 
 Vector2D::Vector2D(float x, float y)

@@ -8,6 +8,8 @@ private:
     SpriteComponent *sprite;
     SDL_Rect colliderBox;
     std::string tag;
+    double lastCollisionTime;
+    double collisionCooldown = 0.5; // in seconds
 
 public:
     ColliderComponent(std::string mTag) { tag = mTag; }
@@ -32,7 +34,9 @@ public:
     }
 
     SDL_Rect getColliderBox() const { return colliderBox; }
-
+    double getLastCollisionTime() const { return lastCollisionTime; }
+    void setLastCollisionTime(double lastCollisionT) { lastCollisionTime = lastCollisionT; }
+    double getcollisionCooldown() const { return collisionCooldown; }
     std::string getTag() const { return tag; }
 };
 

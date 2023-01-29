@@ -11,7 +11,6 @@ public:
 
     float norm();
     double dot(const Vector2D &other) const;
-    Vector2D project(const Vector2D &other) const;
 
     Vector2D &Add(const Vector2D &vec);
     Vector2D &Substract(const Vector2D &vec);
