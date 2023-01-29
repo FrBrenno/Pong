@@ -40,7 +40,7 @@ public:
     std::string getTag() const { return tag; }
 };
 
-enum class CollisionType
+enum CollisionType
 {
     NONE,
     LEFT,

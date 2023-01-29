@@ -13,9 +13,21 @@ bool Game::isRunning = false;
 Manager manager;
 std::vector<ColliderComponent *> Game::colliders;
 
-auto &player(manager.addEntity());
-auto &computer(manager.addEntity());
+bool buttons[4] = {};
+enum Buttons
+{
+    PaddleOneUp = 0,
+    PaddleOneDown,
+    PaddleTwoUp,
+    PaddleTwoDown,
+};
+
+auto &player_1(manager.addEntity());
+auto &player_2(manager.addEntity());
 auto &ball(manager.addEntity());
+
+auto &players(manager.getGroup(Game::groupPlayers));
+auto &balls(manager.getGroup(Game::groupBall));
 
 Game::Game() {}
 Game::~Game()
@@ -60,39 +72,74 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
         isRunning = false;
     }
 
-    player.addComponents<TransformComponent>(64, 224, 32, 64, 2);
-    player.addComponents<SpriteComponent>(00);
-    player.addComponents<MouseControlledMovement>(Vector2D(0, 1));
-    player.addComponents<ColliderComponent>("player");
-    player.addGroup(groupPlayers);
+    player_1.addComponents<TransformComponent>(64, 224, 13, 64, 2);
+    player_1.addComponents<SpriteComponent>(0, 0, false); // Sprite coordonates
+    player_1.addComponents<KeyboardControlledMovement>(4.0f);
+    player_1.addComponents<ColliderComponent>("player_1");
+    player_1.addGroup(groupPlayers);
 
-    computer.addComponents<TransformComponent>(windowWidth - 64 - 32, 224, 32, 64, 2);
-    computer.addComponents<SpriteComponent>(10);
-    computer.addComponents<AIControlledMovement>(Vector2D(0, 1), 3);
-    computer.addComponents<ColliderComponent>("computer");
-    computer.addGroup(groupPlayers);
+    player_2.addComponents<TransformComponent>(windowWidth - 64 - 32, 224, 13, 64, 2);
+    player_2.addComponents<SpriteComponent>(13, 0, false); // Sprite coordonates
+    player_2.addComponents<KeyboardControlledMovement>(4.0f);
+    player_2.addComponents<ColliderComponent>("player_2");
+    player_2.addGroup(groupPlayers);
 
-    ball.addComponents<TransformComponent>(windowWidth / 2 - 32, windowHeight / 2 - 32);
-    ball.addComponents<SpriteComponent>(02);
-    ball.addComponents<BallMovement>();
+    ball.addComponents<TransformComponent>(windowWidth / 2 - 32, windowHeight / 2 - 32, 32, 32, 1);
+    ball.addComponents<SpriteComponent>(35, 0, true); // Sprite coordonates
+    ball.addComponents<BallMovement>(8.0f);
     ball.addComponents<ColliderComponent>("ball");
     ball.addGroup(groupBall);
 }
-
-auto &players(manager.getGroup(Game::groupPlayers));
-auto &balls(manager.getGroup(Game::groupBall));
 
 void Game::handleEvents()
 {
     while (SDL_PollEvent(&event))
     {
-        switch (event.type)
+        if (event.type == SDL_QUIT)
         {
-        case SDL_QUIT:
             isRunning = false;
-            break;
-        default:
-            break;
+        }
+        else if (event.type == SDL_KEYDOWN)
+        {
+            if (event.key.keysym.sym == SDLK_ESCAPE)
+            {
+                isRunning = false;
+            }
+            else if (event.key.keysym.sym == SDLK_z)
+            {
+                buttons[Buttons::PaddleOneUp] = true;
+            }
+            else if (event.key.keysym.sym == SDLK_s)
+            {
+                buttons[Buttons::PaddleOneDown] = true;
+            }
+            else if (event.key.keysym.sym == SDLK_UP)
+            {
+                buttons[Buttons::PaddleTwoUp] = true;
+            }
+            else if (event.key.keysym.sym == SDLK_DOWN)
+            {
+                buttons[Buttons::PaddleTwoDown] = true;
+            }
+        }
+        else if (event.type == SDL_KEYUP)
+        {
+            if (event.key.keysym.sym == SDLK_z)
+            {
+                buttons[Buttons::PaddleOneUp] = false;
+            }
+            else if (event.key.keysym.sym == SDLK_s)
+            {
+                buttons[Buttons::PaddleOneDown] = false;
+            }
+            else if (event.key.keysym.sym == SDLK_UP)
+            {
+                buttons[Buttons::PaddleTwoUp] = false;
+            }
+            else if (event.key.keysym.sym == SDLK_DOWN)
+            {
+                buttons[Buttons::PaddleTwoDown] = false;
+            }
         }
     }
 }
@@ -117,17 +164,41 @@ void Game::update()
 
                     if (collision == CollisionType::LEFT || collision == CollisionType::RIGHT)
                     {
-                        ball.getComponent<BallMovement>().velocity.x *= -1;
+                        ball.getComponent<BallMovement>().direction.x *= -1;
                     }
-                    else if (collision == CollisionType::TOP || collision == CollisionType::BOTTOM)
+                    else if (collision == CollisionType::TOP) 
                     {
-                        ball.getComponent<BallMovement>().velocity.y *= -1;
+                        ball.getComponent<BallMovement>().direction.x *= 1.1;
+                        ball.getComponent<BallMovement>().direction.y *= -1.1;
+                        ball.getComponent<BallMovement>().direction.Normalize();
+                    }
+                    else if (collision == CollisionType::BOTTOM)
+                    {
+                        ball.getComponent<BallMovement>().direction.x *= 0.9;
+                        ball.getComponent<BallMovement>().direction.y *= 0.9;
+                        ball.getComponent<BallMovement>().direction.Normalize();
                     }
                     ball.getComponent<ColliderComponent>().setLastCollisionTime(currentTime);
                 }
             }
         }
     }
+
+    // Updating Players position
+    Vector2D direction_1 = {0, 0};
+    Vector2D direction_2 = {0, 0};
+    if (buttons[Buttons::PaddleOneDown])
+        direction_1.y = 1.0f;
+    else if (buttons[Buttons::PaddleOneUp])
+        direction_1.y = -1.0f;
+    
+    if (buttons[Buttons::PaddleTwoDown])
+        direction_2.y = 1.0f;
+    else if (buttons[Buttons::PaddleTwoUp])
+        direction_2.y = -1.0f;
+
+    player_1.getComponent<KeyboardControlledMovement>().setDirection(direction_1);
+    player_2.getComponent<KeyboardControlledMovement>().setDirection(direction_2);
 }
 
 void Game::render()

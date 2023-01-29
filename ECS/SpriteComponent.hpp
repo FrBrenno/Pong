@@ -9,13 +9,17 @@ private:
     SDL_Texture *texture;
     SDL_Rect srcRect, destRect;
     int spriteID;
+    bool isAnimated = false;
 
 public:
     SpriteComponent() = default;
-    SpriteComponent(int mSpriteID)
+    SpriteComponent(int srcRectX, int srcRectY, bool animation)
     {
         texture = TextureManager::LoadTexture("assets/pong_spritesheet.png");
-        spriteID = mSpriteID;
+        srcRect.x = srcRectX;
+        srcRect.y = srcRectY;
+        isAnimated = animation;
+
     }
     ~SpriteComponent()
     {
@@ -26,11 +30,9 @@ public:
     {
         transform = &entity->getComponent<TransformComponent>();
 
-        srcRect.x = (int)(spriteID / 10)*32;
-        srcRect.y = (int)(spriteID % 10)*32;
         srcRect.w = transform->width;
         srcRect.h = transform->height;
-    
+        
         destRect.x = transform->position.x;
         destRect.y = transform->position.y;
         destRect.h = transform->height * transform->scale;

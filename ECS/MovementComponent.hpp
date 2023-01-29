@@ -4,82 +4,66 @@ class MovementComponent : public Component
 {
 public:
     TransformComponent *transform;
-    Vector2D velocity; // Direction
+    Vector2D direction;
     float speed = 3;
-    MovementComponent()
+    MovementComponent(float mSpeed)
     {
-        velocity.Zero();
+        speed = mSpeed;
     }
-    MovementComponent(Vector2D mVelocity)
+    MovementComponent(Vector2D mdirection)
     {
-        velocity = mVelocity.Normalize();
+        direction = mdirection.Normalize();
     }
-    MovementComponent(Vector2D mVelocity, float mSpeed)
+    MovementComponent(Vector2D mdirection, float mSpeed)
     {
-        velocity = mVelocity.Normalize();
+        direction = mdirection.Normalize();
         speed = mSpeed;
     }
     ~MovementComponent(){};
 
     void init() override
     {
+        direction.Zero();
         transform = &entity->getComponent<TransformComponent>();
     }
 
     bool outOfTheWindow()
     {
-        return transform->position.x < 0 ||
+        float margin = 2.0f;
+        return transform->position.x < 0 || 
                transform->position.x + transform->width * transform->scale > Game::windowWidth ||
                transform->position.y < 0 ||
                transform->position.y + transform->height * transform->scale > Game::windowHeight;
     }
 };
 
-class MouseControlledMovement : public MovementComponent
+class KeyboardControlledMovement : public MovementComponent
 {
 public:
-    MouseControlledMovement(Vector2D mVelocity) : MovementComponent(mVelocity){};
+    KeyboardControlledMovement(float speed) : MovementComponent(speed){};
 
     void update() override
     {
-        int yMouse;
-        SDL_GetMouseState(NULL, &yMouse);
-        yMouse -= 128;
-        if (yMouse < 0)
-            yMouse = 0;
-        if (yMouse > Game::windowHeight)
-            yMouse = Game::windowHeight - 128;
-
-        transform->position.y = yMouse;
+        transform->position += direction*speed;
+        if (transform->position.y + transform->height * transform->scale > Game::windowHeight)
+            transform->position.y = Game::windowHeight - transform->height*transform->scale;
+        else if (transform->position.y < 0)
+            transform->position.y = 0;
     }
-};
-
-class AIControlledMovement : public MovementComponent
-{
-public:
-    AIControlledMovement(Vector2D mVelocity, float mSpeed) : MovementComponent(mVelocity, mSpeed){};
-
-    void update() override
+    void setDirection(Vector2D mDirection)
     {
-        if (
-            (transform->position.y) < 0 ||
-            (transform->position.y + transform->height * transform->scale) > Game::windowHeight)
-        {
-            velocity.y *= -1;
-        }
-        transform->position.y += velocity.y * speed;
+        direction = mDirection;
     }
 };
 
 class BallMovement : public MovementComponent
 {
 public:
-    BallMovement() : MovementComponent() {}
+    BallMovement(float speed) : MovementComponent(speed) {}
     ~BallMovement() {}
 
     void init() override
     {
-        speed = 7;
         std::random_device rd;
         std::mt19937 mt(rd());
         std::bernoulli_distribution dist;
@@ -87,7 +71,7 @@ public:
         int x_rand = dist(mt) ? -1 : 1;
         int y_rand = dist(mt) ? -1 : 1;
 
-        velocity = Vector2D(x_rand, y_rand).Normalize();
+        direction = Vector2D(x_rand, y_rand).Normalize();
 
         transform = &entity->getComponent<TransformComponent>();
     }
@@ -98,15 +82,15 @@ public:
             (transform->position.y) < 0 ||
             (transform->position.y + transform->height * transform->scale) > Game::windowHeight)
         {
-            velocity.y *= -1;
+            direction.y *= -1;
         }
         if (
             (transform->position.x) < 0 ||
             (transform->position.x + transform->width * transform->scale) > Game::windowWidth)
         {
-            velocity.x *= -1;
+            direction.x *= -1;
         }
-        transform->position.x += velocity.x * speed;
-        transform->position.y += velocity.y * speed;
+        transform->position.x += direction.x * speed;
+        transform->position.y += direction.y * speed;
     }
 };
