@@ -10,6 +10,7 @@ private:
     SDL_Rect srcRect, destRect;
     int spriteID;
     bool isAnimated = false;
+    bool isRepeatedY = false;
 
 public:
     SpriteComponent() = default;
@@ -19,7 +20,14 @@ public:
         srcRect.x = srcRectX;
         srcRect.y = srcRectY;
         isAnimated = animation;
-
+    }
+    SpriteComponent(int srcRectX, int srcRectY, bool animation, bool repeatY)
+    {
+        texture = TextureManager::LoadTexture("assets/pong_spritesheet.png");
+        srcRect.x = srcRectX;
+        srcRect.y = srcRectY;
+        isAnimated = animation;
+        isRepeatedY = repeatY;
     }
     ~SpriteComponent()
     {
@@ -32,7 +40,7 @@ public:
 
         srcRect.w = transform->width;
         srcRect.h = transform->height;
-        
+
         destRect.x = transform->position.x;
         destRect.y = transform->position.y;
         destRect.h = transform->height * transform->scale;
@@ -46,6 +54,19 @@ public:
     }
     void draw() override
     {
-        TextureManager::Draw(texture, srcRect, destRect);
+        int repetition = 0;
+        if (isRepeatedY)
+        {
+            repetition = (int)ceil(Game::windowHeight / (destRect.h));
+            for (int i = 0; i < repetition; i++)
+            {
+                TextureManager::Draw(texture, srcRect, destRect);
+                destRect.y += destRect.h; 
+            }
+        }
+        else
+        {
+            TextureManager::Draw(texture, srcRect, destRect);
+        }
     }
 };

@@ -25,6 +25,7 @@ enum Buttons
 auto &player_1(manager.addEntity());
 auto &player_2(manager.addEntity());
 auto &ball(manager.addEntity());
+auto &net(manager.addEntity());
 
 auto &players(manager.getGroup(Game::groupPlayers));
 auto &balls(manager.getGroup(Game::groupBall));
@@ -89,6 +90,10 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     ball.addComponents<BallMovement>(8.0f);
     ball.addComponents<ColliderComponent>("ball");
     ball.addGroup(groupBall);
+
+    net.addComponents<TransformComponent>(windowWidth/2 - 4, 0, 9, 64, 1);
+    net.addComponents<SpriteComponent>(26, 0, false, true);
+    net.addGroup(groupMap);
 }
 
 void Game::handleEvents()
@@ -205,6 +210,7 @@ void Game::render()
 {
     SDL_RenderClear(renderer);
     // Render things here
+    net.draw();
     for (auto &b : balls)
     {
         b->draw();
