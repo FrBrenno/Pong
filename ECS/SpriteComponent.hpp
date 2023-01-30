@@ -36,14 +36,29 @@ public:
 
         if (isAnimated)
         {
-            Animation rotating = {0, 4, 100};
+            Animation idle = {0, 1, 100};
+            Animation rotating = {1, 4, 100};
+            animations.emplace("Idle", idle);
             animations.emplace("Rotating", rotating);
-            Play("Rotating");
+            Play("Idle");
         }
     }
     ~SpriteComponent()
     {
         SDL_DestroyTexture(texture);
+    }
+
+    void setSrcRect(int srcX, int srcY)
+    {
+        srcRect.x = srcX;
+        srcRect.y = srcY;
+    };
+
+    void Play(const char *animName)
+    {
+        frames = animations[animName].frames;
+        animIndex = animations[animName].index;
+        speed = animations[animName].speed;
     }
 
     void init() override
@@ -84,12 +99,4 @@ public:
             TextureManager::Draw(texture, srcRect, destRect);
         }
     }
-
-    void Play(const char* animName)
-    {
-        frames = animations[animName].frames;
-        animIndex = animations[animName].index;
-        speed = animations[animName].speed;
-    }
 };
-

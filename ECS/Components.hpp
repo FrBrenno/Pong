@@ -7,5 +7,4 @@
 #include "SpriteComponent.hpp"
 #include "MovementComponent.hpp"
 #include "ColliderComponent.hpp"
-/*
-#include "KeyboardController.hpp" */
+#include "ScoreComponent.hpp"

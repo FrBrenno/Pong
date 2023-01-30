@@ -75,19 +75,21 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
 
     player_1.addComponents<TransformComponent>(64, 224, 13, 64, 2);
     player_1.addComponents<SpriteComponent>(0, 0, false, false); // Sprite coordonates
-    player_1.addComponents<KeyboardControlledMovement>(6.0f);
+    player_1.addComponents<KeyboardControlledMovement>(7.0f);
     player_1.addComponents<ColliderComponent>("player_1");
+    player_1.addComponents<ScoreComponent>(windowWidth / 2 - 32 - 64, 64, 32, 32, 1, 0);
     player_1.addGroup(groupPlayers);
 
     player_2.addComponents<TransformComponent>(windowWidth - 64 - 32, 224, 13, 64, 2);
     player_2.addComponents<SpriteComponent>(13, 0, false, false); // Sprite coordonates
-    player_2.addComponents<KeyboardControlledMovement>(6.0f);
+    player_2.addComponents<KeyboardControlledMovement>(7.0f);
     player_2.addComponents<ColliderComponent>("player_2");
+    player_2.addComponents<ScoreComponent>(windowWidth / 2 + 64, 64, 32, 32, 1, 0);
     player_2.addGroup(groupPlayers);
 
-    ball.addComponents<TransformComponent>(windowWidth / 2 - 32, windowHeight / 2 - 32, 32, 32, 1);
+    ball.addComponents<TransformComponent>(windowWidth / 2 - 16, windowHeight / 2 - 16, 32, 32, 1);
     ball.addComponents<SpriteComponent>(35, 0, true, false); // Sprite coordonates
-    ball.addComponents<BallMovement>(9.0f);
+    ball.addComponents<BallMovement>(0.0f);
     ball.addComponents<ColliderComponent>("ball");
     ball.addGroup(groupBall);
 
@@ -106,6 +108,12 @@ void Game::handleEvents()
         }
         else if (event.type == SDL_KEYDOWN)
         {
+            // Ball is stopped until someone press any key
+            if (ball.getComponent<BallMovement>().speed == 0.0f)
+            {
+                ball.getComponent<BallMovement>().speed = 6.0f;
+                ball.getComponent<SpriteComponent>().Play("Rotating");
+            }
             if (event.key.keysym.sym == SDLK_ESCAPE)
             {
                 isRunning = false;
@@ -149,6 +157,50 @@ void Game::handleEvents()
     }
 }
 
+void resetGame()
+{
+    // Centering the ball
+    ball.getComponent<TransformComponent>().position = Vector2D(Game::windowWidth / 2 -
+                                                                    ball.getComponent<TransformComponent>().width / 2,
+                                                                Game::windowHeight / 2 -
+                                                                    ball.getComponent<TransformComponent>().height / 2);
+    ball.getComponent<BallMovement>().speed = 0.0f;
+    ball.getComponent<SpriteComponent>().Play("Idle");
+
+    // Centering the paddles
+    player_1.getComponent<TransformComponent>().position = Vector2D(64, 224);
+    player_2.getComponent<TransformComponent>().position = Vector2D(Game::windowWidth - 64 - 32, 224);
+}
+
+void gameover(std::string winner)
+{
+    std::cout << "The winner is " << winner << std::endl;
+    player_1.getComponent<ScoreComponent>().setZeroScore();
+    player_2.getComponent<ScoreComponent>().setZeroScore();
+    resetGame();
+}
+
+void updateScore()
+{
+    TransformComponent ballTransform = ball.getComponent<TransformComponent>();
+    std::cout << "Score: " << player_1.getComponent<ScoreComponent>().getScore() << " x " << player_2.getComponent<ScoreComponent>().getScore() << std::endl;
+    if (ballTransform.position.x < 0)
+    {
+        player_2.getComponent<ScoreComponent>().incrementScore();
+        if (player_2.getComponent<ScoreComponent>().getScore() < 10)
+            resetGame();
+        else
+            gameover("Player 2");
+    }
+    else if (ballTransform.position.x > Game::windowWidth)
+    {
+        player_1.getComponent<ScoreComponent>().incrementScore();
+        if (player_1.getComponent<ScoreComponent>().getScore() < 10)
+            resetGame();
+        else
+            gameover("Player 1");
+    }
+}
 void updatePlayerDirection(Entity &player, Buttons upButton, Buttons downButton)
 {
     Vector2D direction = {0, 0};
@@ -162,7 +214,7 @@ void updatePlayerDirection(Entity &player, Buttons upButton, Buttons downButton)
 
 void checkCollisions()
 {
-    for (auto &cc : colliders)
+    for (auto &cc : Game::colliders)
     {
         if (cc == &ball.getComponent<ColliderComponent>())
             continue;
@@ -199,6 +251,9 @@ void checkCollisions()
                         ball.getComponent<BallMovement>().direction.y *= 0.9;
                         ball.getComponent<BallMovement>().direction.Normalize();
                     }
+                    // Ball speed increases each bounce
+                    ball.getComponent<BallMovement>().speed += 0.13f;
+
                     ball.getComponent<ColliderComponent>().setLastCollisionTime(currentTime);
                 }
             }
@@ -214,6 +269,8 @@ void Game::update()
     // Updating Players position
     updatePlayerDirection(player_1, Buttons::PaddleOneUp, Buttons::PaddleOneDown);
     updatePlayerDirection(player_2, Buttons::PaddleTwoUp, Buttons::PaddleTwoDown);
+    // Updating Score
+    updateScore();
 }
 
 void Game::render()

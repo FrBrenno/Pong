@@ -29,7 +29,6 @@ public:
 
     bool outOfTheWindow()
     {
-        float margin = 2.0f;
         return transform->position.x < 0 || 
                transform->position.x + transform->width * transform->scale > Game::windowWidth ||
                transform->position.y < 0 ||
@@ -83,12 +82,6 @@ public:
             (transform->position.y + transform->height * transform->scale) > Game::windowHeight)
         {
             direction.y *= -1;
-        }
-        if (
-            (transform->position.x) < 0 ||
-            (transform->position.x + transform->width * transform->scale) > Game::windowWidth)
-        {
-            direction.x *= -1;
         }
         transform->position.x += direction.x * speed;
         transform->position.y += direction.y * speed;
