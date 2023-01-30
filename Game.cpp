@@ -91,7 +91,7 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     ball.addComponents<ColliderComponent>("ball");
     ball.addGroup(groupBall);
 
-    net.addComponents<TransformComponent>(windowWidth/2 - 4, 0, 9, 64, 1);
+    net.addComponents<TransformComponent>(windowWidth / 2 - 4, 0, 9, 64, 1);
     net.addComponents<SpriteComponent>(26, 0, false, true);
     net.addGroup(groupMap);
 }
@@ -149,10 +149,19 @@ void Game::handleEvents()
     }
 }
 
-void Game::update()
+void updatePlayerDirection(Entity &player, Buttons upButton, Buttons downButton)
 {
-    manager.refresh();
-    manager.update();
+    Vector2D direction = {0, 0};
+    if (buttons[downButton])
+        direction.y = 1.0f;
+    else if (buttons[upButton])
+        direction.y = -1.0f;
+
+    player.getComponent<KeyboardControlledMovement>().setDirection(direction);
+}
+
+void checkCollisions()
+{
     for (auto &cc : colliders)
     {
         if (cc == &ball.getComponent<ColliderComponent>())
@@ -170,16 +179,23 @@ void Game::update()
                     if (collision == CollisionType::LEFT || collision == CollisionType::RIGHT)
                     {
                         ball.getComponent<BallMovement>().direction.x *= -1;
+                        // add randomness to the y direction
+                        ball.getComponent<BallMovement>().direction.y += (rand() % 20 - 10) * 0.01;
+                        ball.getComponent<BallMovement>().direction.Normalize();
                     }
-                    else if (collision == CollisionType::TOP) 
+                    else if (collision == CollisionType::TOP)
                     {
                         ball.getComponent<BallMovement>().direction.x *= 1.1;
+                        // add randomness to the x direction
+                        ball.getComponent<BallMovement>().direction.x += (rand() % 20 - 10) * 0.01;
                         ball.getComponent<BallMovement>().direction.y *= -1.1;
                         ball.getComponent<BallMovement>().direction.Normalize();
                     }
                     else if (collision == CollisionType::BOTTOM)
                     {
                         ball.getComponent<BallMovement>().direction.x *= 0.9;
+                        // add randomness to the x direction
+                        ball.getComponent<BallMovement>().direction.x += (rand() % 20 - 10) * 0.01;
                         ball.getComponent<BallMovement>().direction.y *= 0.9;
                         ball.getComponent<BallMovement>().direction.Normalize();
                     }
@@ -188,22 +204,16 @@ void Game::update()
             }
         }
     }
+}
 
+void Game::update()
+{
+    manager.refresh();
+    manager.update();
+    checkCollisions();
     // Updating Players position
-    Vector2D direction_1 = {0, 0};
-    Vector2D direction_2 = {0, 0};
-    if (buttons[Buttons::PaddleOneDown])
-        direction_1.y = 1.0f;
-    else if (buttons[Buttons::PaddleOneUp])
-        direction_1.y = -1.0f;
-    
-    if (buttons[Buttons::PaddleTwoDown])
-        direction_2.y = 1.0f;
-    else if (buttons[Buttons::PaddleTwoUp])
-        direction_2.y = -1.0f;
-
-    player_1.getComponent<KeyboardControlledMovement>().setDirection(direction_1);
-    player_2.getComponent<KeyboardControlledMovement>().setDirection(direction_2);
+    updatePlayerDirection(player_1, Buttons::PaddleOneUp, Buttons::PaddleOneDown);
+    updatePlayerDirection(player_2, Buttons::PaddleTwoUp, Buttons::PaddleTwoDown);
 }
 
 void Game::render()
