@@ -74,20 +74,20 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     }
 
     player_1.addComponents<TransformComponent>(64, 224, 13, 64, 2);
-    player_1.addComponents<SpriteComponent>(0, 0, false); // Sprite coordonates
-    player_1.addComponents<KeyboardControlledMovement>(4.0f);
+    player_1.addComponents<SpriteComponent>(0, 0, false, false); // Sprite coordonates
+    player_1.addComponents<KeyboardControlledMovement>(6.0f);
     player_1.addComponents<ColliderComponent>("player_1");
     player_1.addGroup(groupPlayers);
 
     player_2.addComponents<TransformComponent>(windowWidth - 64 - 32, 224, 13, 64, 2);
-    player_2.addComponents<SpriteComponent>(13, 0, false); // Sprite coordonates
-    player_2.addComponents<KeyboardControlledMovement>(4.0f);
+    player_2.addComponents<SpriteComponent>(13, 0, false, false); // Sprite coordonates
+    player_2.addComponents<KeyboardControlledMovement>(6.0f);
     player_2.addComponents<ColliderComponent>("player_2");
     player_2.addGroup(groupPlayers);
 
     ball.addComponents<TransformComponent>(windowWidth / 2 - 32, windowHeight / 2 - 32, 32, 32, 1);
-    ball.addComponents<SpriteComponent>(35, 0, true); // Sprite coordonates
-    ball.addComponents<BallMovement>(8.0f);
+    ball.addComponents<SpriteComponent>(35, 0, true, false); // Sprite coordonates
+    ball.addComponents<BallMovement>(9.0f);
     ball.addComponents<ColliderComponent>("ball");
     ball.addGroup(groupBall);
 
