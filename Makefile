@@ -1,7 +1,7 @@
 CXX=g++
 FLAGS=-std=c++17 -Wall -Wextra -Wpedantic -D_GNU_SOURCE -Werror=all
 SANITIZERS=-fsanitize=address
-LBLIBS= $(shell pkg-config --libs sdl2 SDL2_image)
+LBLIBS= $(shell pkg-config --libs sdl2 SDL2_image SDL2_ttf)
 CLASSES=$(wildcard *.hpp)
 OBJECTS=$(CLASSES:.hpp=.o)
 ECS=$(wildcard ECS/*.cpp)

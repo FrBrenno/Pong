@@ -26,9 +26,11 @@ auto &player_1(manager.addEntity());
 auto &player_2(manager.addEntity());
 auto &ball(manager.addEntity());
 auto &net(manager.addEntity());
+auto &titleLabel(manager.addEntity());
 
 auto &players(manager.getGroup(Game::groupPlayers));
 auto &balls(manager.getGroup(Game::groupBall));
+auto &labels(manager.getGroup(Game::groupUI));
 
 Game::Game() {}
 Game::~Game()
@@ -72,6 +74,12 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     {
         isRunning = false;
     }
+
+    if (TTF_Init() == -1)
+        std::cout << "Error: SDL_TTF" << std::endl;
+    SDL_Color white = {255, 255, 255};
+    titleLabel.addComponents<UILabel>(windowWidth / 2 - 64, windowHeight - 64, "PONG", 64, white);
+    titleLabel.addGroup(groupUI);
 
     player_1.addComponents<TransformComponent>(64, 224, 13, 64, 2);
     player_1.addComponents<SpriteComponent>(0, 0, false, false); // Sprite coordonates
@@ -183,7 +191,6 @@ void gameover(std::string winner)
 void updateScore()
 {
     TransformComponent ballTransform = ball.getComponent<TransformComponent>();
-    std::cout << "Score: " << player_1.getComponent<ScoreComponent>().getScore() << " x " << player_2.getComponent<ScoreComponent>().getScore() << std::endl;
     if (ballTransform.position.x < 0)
     {
         player_2.getComponent<ScoreComponent>().incrementScore();
@@ -201,6 +208,7 @@ void updateScore()
             gameover("Player 1");
     }
 }
+
 void updatePlayerDirection(Entity &player, Buttons upButton, Buttons downButton)
 {
     Vector2D direction = {0, 0};
@@ -261,7 +269,7 @@ void checkCollisions()
     }
 }
 
-void Game::update()
+void Game::update(float deltaTime)
 {
     manager.refresh();
     manager.update();
@@ -273,11 +281,15 @@ void Game::update()
     updateScore();
 }
 
-void Game::render()
+void Game::render(float deltaTime)
 {
     SDL_RenderClear(renderer);
     // Render things here
     net.draw();
+    for (auto &l : labels)
+    {
+        l->draw();
+    }
     for (auto &b : balls)
     {
         b->draw();

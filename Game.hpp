@@ -27,11 +27,13 @@ public:
     /// @brief Handle user inputs/events
     void handleEvents();
     /// @brief Update all game objects
-    void update();
+    void update(float deltaTime);
     /// @brief Render objects in the window
-    void render();
+    void render(float deltaTime);
     /// @brief Destroy the window and the renderer before quitting
     void clean();
+
+    SDL_Window *getWindow() const { return window; }
 
     static SDL_Renderer *renderer;
     static SDL_Event event;
@@ -39,14 +41,14 @@ public:
     static bool isRunning;
     static int windowHeight, windowWidth;
 
-     
     enum groupLabels : std::size_t
-	{
-		groupMap,
-		groupPlayers,
-		groupColliders,
-		groupBall
-	};
+    {
+        groupMap,
+        groupPlayers,
+        groupColliders,
+        groupBall,
+        groupUI
+    };
 
 private:
     SDL_Window *window;
