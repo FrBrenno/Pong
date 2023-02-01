@@ -9,9 +9,9 @@ private:
     SDL_Rect srcRect, destRect;
 
 public:
-    ScoreComponent(float posX, float posY, int width, int height, int scale, int score)
+    ScoreComponent(float posX, float posY, int width, int height, int scale, int mScore)
     {
-        this->score = score;
+        score = mScore;
         transform = new TransformComponent(posX, posY, width, height, scale);
         texture = TextureManager::LoadTexture("assets/pong_spritesheet.png");
         srcRect.x = 0;
@@ -24,7 +24,7 @@ public:
     };
 
     int getScore() const { return score; }
-    void setZeroScore()
+    void resetScore()
     {
         score = 0;
         srcRect.x = 0;
@@ -32,7 +32,7 @@ public:
     void incrementScore()
     {
         score++;
-        srcRect.x = 32 * score * transform->scale;
+        srcRect.x = 32 * score;
     }
 
     void init() override

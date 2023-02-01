@@ -1,12 +1,10 @@
-#include <chrono>
 #include <iostream>
 #include <random>
-#include <thread>
 
 #include "ECS/Components.hpp"
 #include "Game.hpp"
-#include "Timer.hpp"
 #include "TextureManager.hpp"
+#include "Timer.hpp"
 
 SDL_Renderer *Game::renderer = nullptr;
 SDL_Event Game::event;
@@ -26,6 +24,7 @@ enum Buttons
     PaddleTwoDown,
 };
 
+int playerScored = 0;
 auto &player_1(manager.addEntity());
 auto &player_2(manager.addEntity());
 auto &ball(manager.addEntity());
@@ -95,14 +94,14 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     player_1.addComponents<SpriteComponent>(0, 0, false, false); // Sprite coordonates
     player_1.addComponents<KeyboardControlledMovement>(7.0f);
     player_1.addComponents<ColliderComponent>("player_1");
-    player_1.addComponents<ScoreComponent>(windowWidth / 2 - 32 - 64, 64, 32, 32, 1, 0);
+    player_1.addComponents<ScoreComponent>(windowWidth / 2 - (32 + 64) * 2, 64, 32, 32, 2, 0);
     player_1.addGroup(groupPlayers);
 
     player_2.addComponents<TransformComponent>(windowWidth - 64 - 32, 224, 13, 64, 2);
     player_2.addComponents<SpriteComponent>(13, 0, false, false); // Sprite coordonates
     player_2.addComponents<KeyboardControlledMovement>(7.0f);
     player_2.addComponents<ColliderComponent>("player_2");
-    player_2.addComponents<ScoreComponent>(windowWidth / 2 + 64, 64, 32, 32, 1, 0);
+    player_2.addComponents<ScoreComponent>(windowWidth / 2 + 64 * 2, 64, 32, 32, 2, 0);
     player_2.addGroup(groupPlayers);
 
     ball.addComponents<TransformComponent>(windowWidth / 2 - 16, windowHeight / 2 - 16, 32, 32, 1);
@@ -129,11 +128,16 @@ void Game::handleEvents()
         }
         else if (event.type == SDL_KEYDOWN)
         {
-            // Ball is stopped until someone press any key
+            // Ball is stopped until player who has scored press any key
             if (ball.getComponent<BallMovement>().speed == 0.0f)
             {
-                ball.getComponent<BallMovement>().speed = 6.0f;
-                ball.getComponent<SpriteComponent>().Play("Rotating");
+                if ((playerScored == 1 && (event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_s)) ||
+                    (playerScored == 2 && (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)) ||
+                    (playerScored == 0))
+                {
+                    ball.getComponent<BallMovement>().speed = 6.0f;
+                    ball.getComponent<SpriteComponent>().Play("Rotating");
+                }
             }
             if (event.key.keysym.sym == SDLK_ESCAPE)
             {
@@ -178,7 +182,6 @@ void Game::handleEvents()
     }
 }
 
-
 void resetGame()
 {
     // Centering the ball
@@ -188,7 +191,6 @@ void resetGame()
                                                                     ball.getComponent<TransformComponent>().height / 2);
     ball.getComponent<BallMovement>().speed = 0.0f;
     ball.getComponent<SpriteComponent>().Play("Idle");
-
     // Centering the paddles
     player_1.getComponent<TransformComponent>().position = Vector2D(64, 224);
     player_2.getComponent<TransformComponent>().position = Vector2D(Game::windowWidth - 64 - 32, 224);
@@ -198,36 +200,37 @@ void resetGame()
 void gameover(std::string winner)
 {
     std::cout << "The winner is " << winner << std::endl;
-    player_1.getComponent<ScoreComponent>().setZeroScore();
-    player_2.getComponent<ScoreComponent>().setZeroScore();
+    player_1.getComponent<ScoreComponent>().resetScore();
+    player_2.getComponent<ScoreComponent>().resetScore();
+    playerScored = 0;
     resetGame();
 }
 
 void updateScore()
 {
     TransformComponent ballTransform = ball.getComponent<TransformComponent>();
+    Entity *scoringPlayer = nullptr;
     if (ballTransform.position.x < 0)
     {
-        player_2.getComponent<ScoreComponent>().incrementScore();
-        if (player_2.getComponent<ScoreComponent>().getScore() < 10)
-        {
-            resetGame();
-        }
-        else
-        {
-            gameover("Player 2");
-        }
+        scoringPlayer = &player_2;
+        playerScored = 2;
     }
     else if (ballTransform.position.x > Game::windowWidth)
     {
-        player_1.getComponent<ScoreComponent>().incrementScore();
-        if (player_1.getComponent<ScoreComponent>().getScore() < 10)
+        scoringPlayer = &player_1;
+        playerScored = 1;
+    }
+
+    if (scoringPlayer != NULL)
+    {
+        scoringPlayer->getComponent<ScoreComponent>().incrementScore();
+        if (scoringPlayer->getComponent<ScoreComponent>().getScore() < 10)
         {
             resetGame();
         }
         else
         {
-            gameover("Player 1");
+            gameover(scoringPlayer == &player_1 ? "Player 1" : "Player 2");
         }
     }
 }
@@ -245,50 +248,59 @@ void updatePlayerDirection(Entity &player, Buttons upButton, Buttons downButton)
 
 void checkCollisions()
 {
+    TransformComponent &ballTransform = ball.getComponent<TransformComponent>();
+    BallMovement &ballMovement = ball.getComponent<BallMovement>();
+    ColliderComponent &ballCollider = ball.getComponent<ColliderComponent>();
+    SoundComponent &ballSound = ball.getComponent<SoundComponent>();
+
     for (auto &cc : Game::colliders)
     {
-        if (cc == &ball.getComponent<ColliderComponent>())
+        // Ball colliding with itself
+        if (cc == &ballCollider)
             continue;
-        else
-        {
-            CollisionType collision;
-            if (Collision::SATCollision(ball.getComponent<ColliderComponent>(), *cc, collision))
-            {
-                double currentTime = SDL_GetTicks() / 1000.0;
-                if (currentTime - ball.getComponent<ColliderComponent>().getLastCollisionTime() >
-                    ball.getComponent<ColliderComponent>().getcollisionCooldown())
-                {
-                    // Play ball collision sound
-                    ball.getComponent<SoundComponent>().Play("paddle_hit");
-                    if (collision == CollisionType::LEFT || collision == CollisionType::RIGHT)
-                    {
-                        ball.getComponent<BallMovement>().direction.x *= -1;
-                        // add randomness to the y direction
-                        ball.getComponent<BallMovement>().direction.y += (rand() % 20 - 10) * 0.01;
-                        ball.getComponent<BallMovement>().direction.Normalize();
-                    }
-                    else if (collision == CollisionType::TOP)
-                    {
-                        ball.getComponent<BallMovement>().direction.x *= 1.1;
-                        // add randomness to the x direction
-                        ball.getComponent<BallMovement>().direction.x += (rand() % 20 - 10) * 0.01;
-                        ball.getComponent<BallMovement>().direction.y *= -1.1;
-                        ball.getComponent<BallMovement>().direction.Normalize();
-                    }
-                    else if (collision == CollisionType::BOTTOM)
-                    {
-                        ball.getComponent<BallMovement>().direction.x *= 0.9;
-                        // add randomness to the x direction
-                        ball.getComponent<BallMovement>().direction.x += (rand() % 20 - 10) * 0.01;
-                        ball.getComponent<BallMovement>().direction.y *= 0.9;
-                        ball.getComponent<BallMovement>().direction.Normalize();
-                    }
-                    // Ball speed increases each bounce
-                    ball.getComponent<BallMovement>().speed += 0.13f;
 
-                    ball.getComponent<ColliderComponent>().setLastCollisionTime(currentTime);
+        // Colliders collision
+        CollisionType collision;
+        if (Collision::SATCollision(ballCollider, *cc, collision))
+        {
+            // check if collision cooldown is up
+            double currentTime = SDL_GetTicks() / 1000.0;
+            if (currentTime - ballCollider.getLastCollisionTime() > ballCollider.getcollisionCooldown())
+            {
+                // Ball hits the paddle
+                ballSound.Play("paddle_hit");
+                switch (collision)
+                {
+                case CollisionType::LEFT:
+                case CollisionType::RIGHT:
+                    ballMovement.direction.x *= -1;
+                    ballMovement.direction.y += (rand() % 20 - 10) * 0.01;
+                    break;
+                case CollisionType::TOP:
+                    ballMovement.direction.x *= 1.1;
+                    ballMovement.direction.x += (rand() % 20 - 10) * 0.01;
+                    ballMovement.direction.y *= -1.1;
+                    break;
+                case CollisionType::BOTTOM:
+                    ballMovement.direction.x *= 0.9;
+                    ballMovement.direction.x += (rand() % 20 - 10) * 0.01;
+                    ballMovement.direction.y *= 0.9;
+                    break;
                 }
+                ballMovement.direction.Normalize();
+                ballMovement.speed += 0.13f;
+                ballCollider.setLastCollisionTime(currentTime);
             }
+        }
+
+        // Wall collision
+        if (
+            (ballTransform.position.y) < 0 ||
+            (ballTransform.position.y + ballTransform.height * ballTransform.scale) > Game::windowHeight)
+        {
+            ball.getComponent<SoundComponent>().Play("wall_hit");
+            ballMovement.direction.y *= -1;
+            ballMovement.direction.Normalize();
         }
     }
 }
@@ -296,7 +308,7 @@ void checkCollisions()
 void Game::update(float deltaTime)
 {
     manager.refresh();
-    manager.update();
+    manager.update(deltaTime);
     checkCollisions();
     // Updating Players position
     updatePlayerDirection(player_1, Buttons::PaddleOneUp, Buttons::PaddleOneDown);

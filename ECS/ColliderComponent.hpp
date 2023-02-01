@@ -25,7 +25,7 @@ public:
         Game::colliders.push_back(this);
     }
 
-    void update() override
+    void update(float deltaTime) override
     {
         colliderBox.x = static_cast<int>(transform->position.x);
         colliderBox.y = static_cast<int>(transform->position.y);
@@ -37,6 +37,7 @@ public:
     double getLastCollisionTime() const { return lastCollisionTime; }
     void setLastCollisionTime(double lastCollisionT) { lastCollisionTime = lastCollisionT; }
     double getcollisionCooldown() const { return collisionCooldown; }
+    TransformComponent* getTransform() { return transform; }
     std::string getTag() const { return tag; }
 };
 
@@ -105,4 +106,6 @@ public:
         // No collision
         return false;
     }
+
 };
+

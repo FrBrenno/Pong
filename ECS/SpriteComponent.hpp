@@ -74,7 +74,7 @@ public:
         destRect.w = transform->width * transform->scale;
     }
 
-    void update() override
+    void update(float deltaTime) override
     {
         if (isAnimated)
             srcRect.x = 36 + srcRect.w * static_cast<int>((SDL_GetTicks() / speed) % frames);

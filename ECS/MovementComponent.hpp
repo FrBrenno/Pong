@@ -27,13 +27,6 @@ public:
         transform = &entity->getComponent<TransformComponent>();
     }
 
-    bool outOfTheWindow()
-    {
-        return transform->position.x < 0 ||
-               transform->position.x + transform->width * transform->scale > Game::windowWidth ||
-               transform->position.y < 0 ||
-               transform->position.y + transform->height * transform->scale > Game::windowHeight;
-    }
 };
 
 class KeyboardControlledMovement : public MovementComponent
@@ -41,7 +34,7 @@ class KeyboardControlledMovement : public MovementComponent
 public:
     KeyboardControlledMovement(float speed) : MovementComponent(speed){};
 
-    void update() override
+    void update(float deltaTime) override
     {
         transform->position += direction * speed;
         if (transform->position.y + transform->height * transform->scale > Game::windowHeight)
@@ -75,15 +68,11 @@ public:
         transform = &entity->getComponent<TransformComponent>();
     }
 
-    void update() override
+    void update(float deltaTime) override
     {
-        if (
-            (transform->position.y) < 0 ||
-            (transform->position.y + transform->height * transform->scale) > Game::windowHeight)
-        {
-            this->entity->getComponent<SoundComponent>().Play("wall_hit");
+        if ((transform->position.y + transform->height * transform->scale > Game::windowHeight) ||
+            (transform->position.y < 0))
             direction.y *= -1;
-        }
         transform->position.x += direction.x * speed;
         transform->position.y += direction.y * speed;
     }

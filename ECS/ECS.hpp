@@ -42,7 +42,7 @@ public:
     virtual ~Component(){};
 
     virtual void init(){};
-    virtual void update(){};
+    virtual void update(float deltaTime){};
     virtual void draw(){};
 };
 
@@ -60,10 +60,10 @@ public:
     Entity(Manager &mManager) : manager(mManager){};
     ~Entity(){};
     /// @brief Updates each component of the entity
-    void update()
+    void update(float deltaTime)
     {
         for (auto &c : components)
-            c->update();
+            c->update(deltaTime);
     };
     /// @brief Draws each component of the entity
     void draw()
@@ -142,10 +142,10 @@ private:
 public:
     ~Manager(){}
     /// @brief Updates each entity of the game
-    void update()
+    void update(float deltaTime)
     {
         for (auto &e : entities)
-            e->update();
+            e->update(deltaTime);
     };
     /// @brief Draw each entity of the game
     void draw()

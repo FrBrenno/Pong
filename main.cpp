@@ -13,7 +13,7 @@ int main()
     float totalTime = 0;
 
     Game *game = new Game();
-    game->init("Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 800, false);
+    game->init("Pong", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 960, false);
 
     while (game->isRunning)
     {
