@@ -5,6 +5,7 @@
 
 #include "ECS/Components.hpp"
 #include "Game.hpp"
+#include "Timer.hpp"
 #include "TextureManager.hpp"
 
 SDL_Renderer *Game::renderer = nullptr;
@@ -14,6 +15,7 @@ int Game::windowWidth;
 bool Game::isRunning = false;
 Manager manager;
 std::vector<ColliderComponent *> Game::colliders;
+Timer timer;
 
 bool buttons[4] = {};
 enum Buttons
@@ -190,6 +192,7 @@ void resetGame()
     // Centering the paddles
     player_1.getComponent<TransformComponent>().position = Vector2D(64, 224);
     player_2.getComponent<TransformComponent>().position = Vector2D(Game::windowWidth - 64 - 32, 224);
+    timer.wait(1);
 }
 
 void gameover(std::string winner)
