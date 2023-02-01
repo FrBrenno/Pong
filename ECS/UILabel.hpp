@@ -23,7 +23,7 @@ public:
         labelText = text;
         fontSize = size;
         textColor = color;
-        path = "assets/pong.ttf";
+        path = "assets/Lilita.ttf";
 
         LoadFont();
         setLabelText();

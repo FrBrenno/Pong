@@ -78,7 +78,7 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     if (TTF_Init() == -1)
         std::cout << "Error: SDL_TTF" << std::endl;
     SDL_Color white = {255, 255, 255};
-    titleLabel.addComponents<UILabel>(windowWidth / 2 - 64, windowHeight - 64, "PONG", 64, white);
+    titleLabel.addComponents<UILabel>(16, 16, "PONG", 64, white);
     titleLabel.addGroup(groupUI);
 
     player_1.addComponents<TransformComponent>(64, 224, 13, 64, 2);
