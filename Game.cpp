@@ -1,5 +1,7 @@
+#include <chrono>
 #include <iostream>
 #include <random>
+#include <thread>
 
 #include "ECS/Components.hpp"
 #include "Game.hpp"
@@ -69,6 +71,12 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
             std::cout << "Renderer created!" << std::endl;
         }
         isRunning = true;
+
+        // Initialize SDL_Mixer
+        if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+        {
+            std::cout << "Error: SDL_mixer could not initialize: " << Mix_GetError() << std::endl;
+        }
     }
     else
     {
@@ -99,6 +107,9 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
     ball.addComponents<SpriteComponent>(35, 0, true, false); // Sprite coordonates
     ball.addComponents<BallMovement>(0.0f);
     ball.addComponents<ColliderComponent>("ball");
+    ball.addComponents<SoundComponent>();
+    ball.getComponent<SoundComponent>().addSound("paddle_hit", "assets/paddle_hit.wav");
+    ball.getComponent<SoundComponent>().addSound("wall_hit", "assets/wall_hit.wav");
     ball.addGroup(groupBall);
 
     net.addComponents<TransformComponent>(windowWidth / 2 - 4, 0, 9, 64, 1);
@@ -165,6 +176,7 @@ void Game::handleEvents()
     }
 }
 
+
 void resetGame()
 {
     // Centering the ball
@@ -195,17 +207,25 @@ void updateScore()
     {
         player_2.getComponent<ScoreComponent>().incrementScore();
         if (player_2.getComponent<ScoreComponent>().getScore() < 10)
+        {
             resetGame();
+        }
         else
+        {
             gameover("Player 2");
+        }
     }
     else if (ballTransform.position.x > Game::windowWidth)
     {
         player_1.getComponent<ScoreComponent>().incrementScore();
         if (player_1.getComponent<ScoreComponent>().getScore() < 10)
+        {
             resetGame();
+        }
         else
+        {
             gameover("Player 1");
+        }
     }
 }
 
@@ -235,7 +255,8 @@ void checkCollisions()
                 if (currentTime - ball.getComponent<ColliderComponent>().getLastCollisionTime() >
                     ball.getComponent<ColliderComponent>().getcollisionCooldown())
                 {
-
+                    // Play ball collision sound
+                    ball.getComponent<SoundComponent>().Play("paddle_hit");
                     if (collision == CollisionType::LEFT || collision == CollisionType::RIGHT)
                     {
                         ball.getComponent<BallMovement>().direction.x *= -1;

@@ -5,6 +5,7 @@
 #include "ECS.hpp"
 #include "TransformComponent.hpp"
 #include "SpriteComponent.hpp"
+#include "SoundComponent.hpp"
 #include "MovementComponent.hpp"
 #include "ColliderComponent.hpp"
 #include "ScoreComponent.hpp"

@@ -47,7 +47,8 @@
         "typeinfo": "cpp",
         "bitset": "cpp",
         "fstream": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "chrono": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }

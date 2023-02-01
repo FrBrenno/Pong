@@ -29,7 +29,7 @@ public:
 
     bool outOfTheWindow()
     {
-        return transform->position.x < 0 || 
+        return transform->position.x < 0 ||
                transform->position.x + transform->width * transform->scale > Game::windowWidth ||
                transform->position.y < 0 ||
                transform->position.y + transform->height * transform->scale > Game::windowHeight;
@@ -43,9 +43,9 @@ public:
 
     void update() override
     {
-        transform->position += direction*speed;
+        transform->position += direction * speed;
         if (transform->position.y + transform->height * transform->scale > Game::windowHeight)
-            transform->position.y = Game::windowHeight - transform->height*transform->scale;
+            transform->position.y = Game::windowHeight - transform->height * transform->scale;
         else if (transform->position.y < 0)
             transform->position.y = 0;
     }
@@ -81,6 +81,7 @@ public:
             (transform->position.y) < 0 ||
             (transform->position.y + transform->height * transform->scale) > Game::windowHeight)
         {
+            this->entity->getComponent<SoundComponent>().Play("wall_hit");
             direction.y *= -1;
         }
         transform->position.x += direction.x * speed;

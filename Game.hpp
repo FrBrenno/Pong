@@ -3,6 +3,7 @@
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 #include <vector>
 
@@ -38,6 +39,7 @@ public:
     static SDL_Renderer *renderer;
     static SDL_Event event;
     static std::vector<ColliderComponent *> colliders;
+
     static bool isRunning;
     static int windowHeight, windowWidth;
 
