@@ -41,6 +41,10 @@ Game::~Game()
     // Clean up SDL resources
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    // Clean up SDL Mixer
+    Mix_CloseAudio();
+    // Clean up SDL TTF
+    TTF_Quit();
     SDL_Quit();
 }
 
@@ -84,8 +88,10 @@ void Game::init(const char *title, int xpos, int ypos, int height, int width, bo
         isRunning = false;
     }
 
+    // Initialize SDL_TTF
     if (TTF_Init() == -1)
         std::cout << "Error: SDL_TTF" << std::endl;
+
     SDL_Color white = {255, 255, 255};
     titleLabel.addComponents<UILabel>(16, 16, "PONG", 64, white);
     titleLabel.addGroup(groupUI);
@@ -131,8 +137,8 @@ void Game::handleEvents()
             // Ball is stopped until player who has scored press any key
             if (ball.getComponent<BallMovement>().speed == 0.0f)
             {
-                if ((playerScored == 1 && (event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_s)) ||
-                    (playerScored == 2 && (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)) ||
+                if ((playerScored == 1 && (event.key.keysym.sym == SDLK_UP || event.key.keysym.sym == SDLK_DOWN)) ||
+                    (playerScored == 2 && (event.key.keysym.sym == SDLK_z || event.key.keysym.sym == SDLK_s)) ||
                     (playerScored == 0))
                 {
                     ball.getComponent<BallMovement>().speed = 6.0f;
@@ -260,7 +266,7 @@ void checkCollisions()
             continue;
 
         // Colliders collision
-        CollisionType collision;
+        CollisionType collision = CollisionType::NONE;
         if (Collision::SATCollision(ballCollider, *cc, collision))
         {
             // check if collision cooldown is up

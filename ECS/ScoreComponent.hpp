@@ -20,10 +20,12 @@ public:
     ~ScoreComponent()
     {
         delete transform;
-        SDL_DestroyTexture(texture);
+        if (texture)
+            SDL_DestroyTexture(texture);
     };
 
     int getScore() const { return score; }
+    
     void resetScore()
     {
         score = 0;

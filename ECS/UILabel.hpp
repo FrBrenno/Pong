@@ -30,12 +30,16 @@ public:
     }
     ~UILabel()
     {
-        SDL_DestroyTexture(labelTexture);
+        if (labelTexture)
+            SDL_DestroyTexture(labelTexture);
+
     }
 
     void LoadFont()
     {
         font = TTF_OpenFont(path.c_str(), fontSize);
+        if (!font)
+            std::cout << "Error: Failed to open TTF Font: " << TTF_GetError() << std::endl;
     }
 
     void setLabelText()
@@ -44,7 +48,7 @@ public:
         labelTexture = SDL_CreateTextureFromSurface(Game::renderer, surf);
         SDL_FreeSurface(surf);
 
-        SDL_QueryTexture(labelTexture, nullptr, nullptr, &position.w, &position.h); //Set texture width and height
+        SDL_QueryTexture(labelTexture, nullptr, nullptr, &position.w, &position.h); // Set texture width and height
     }
 
     void draw() override

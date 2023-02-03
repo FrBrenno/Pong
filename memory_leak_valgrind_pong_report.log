@@ -1,0 +1,290 @@
+student@gamedev:~/Pong$ valgrind --leak-check=yes --track-origins=yes -s ./main > memory_leak_valgrind_pong_report.log 
+==154282== Memcheck, a memory error detector
+==154282== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==154282== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==154282== Command: ./main
+==154282== 
+==154282== Conditional jump or move depends on uninitialised value(s)
+==154282==    at 0x10D1CF: checkCollisions() (in /home/student/Pong/main)
+==154282==    by 0x10D67C: Game::update(float) (in /home/student/Pong/main)
+==154282==    by 0x10BD2C: main (main.cpp:26)
+==154282==  Uninitialised value was created by a heap allocation
+==154282==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x1123CF: ColliderComponent& Entity::addComponents<ColliderComponent, char const (&) [5]>(char const (&) [5]) (in /home/student/Pong/main)
+==154282==    by 0x10C613: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== Invalid read of size 8
+==154282==    at 0x492CE30: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10EA21: SpriteComponent::~SpriteComponent() (in /home/student/Pong/main)
+==154282==    by 0x10EA5D: SpriteComponent::~SpriteComponent() (in /home/student/Pong/main)
+==154282==    by 0x116ADD: std::default_delete<Component>::operator()(Component*) const (in /home/student/Pong/main)
+==154282==    by 0x114699: std::unique_ptr<Component, std::default_delete<Component> >::~unique_ptr() (in /home/student/Pong/main)
+==154282==    by 0x118C3A: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x1170E4: void std::_Destroy_aux<false>::__destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x114D89: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x112C74: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > >&) (in /home/student/Pong/main)
+==154282==    by 0x110432: std::vector<std::unique_ptr<Component, std::default_delete<Component> >, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > > >::~vector() (in /home/student/Pong/main)
+==154282==    by 0x10DEAF: Entity::~Entity() (in /home/student/Pong/main)
+==154282==    by 0x1135AF: std::default_delete<Entity>::operator()(Entity*) const (in /home/student/Pong/main)
+==154282==  Address 0x1358c050 is 0 bytes inside a block of size 144 free'd
+==154282==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492CD9D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492CF4F: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10BFE0: Game::~Game() (in /home/student/Pong/main)
+==154282==    by 0x10BEA3: main (main.cpp:47)
+==154282==  Block was alloc'd at
+==154282==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492D07B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492DA8E: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x11AA6F: TextureManager::LoadTexture(char const*) (in /home/student/Pong/main)
+==154282==    by 0x10E8E4: SpriteComponent::SpriteComponent(int, int, bool, bool) (in /home/student/Pong/main)
+==154282==    by 0x111B4A: SpriteComponent& Entity::addComponents<SpriteComponent, int, int, bool, bool>(int&&, int&&, bool&&, bool&&) (in /home/student/Pong/main)
+==154282==    by 0x10C33F: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== Invalid read of size 8
+==154282==    at 0x492CE30: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10FB17: ScoreComponent::~ScoreComponent() (in /home/student/Pong/main)
+==154282==    by 0x10FB43: ScoreComponent::~ScoreComponent() (in /home/student/Pong/main)
+==154282==    by 0x116ADD: std::default_delete<Component>::operator()(Component*) const (in /home/student/Pong/main)
+==154282==    by 0x114699: std::unique_ptr<Component, std::default_delete<Component> >::~unique_ptr() (in /home/student/Pong/main)
+==154282==    by 0x118C3A: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x1170E4: void std::_Destroy_aux<false>::__destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x114D89: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x112C74: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > >&) (in /home/student/Pong/main)
+==154282==    by 0x110432: std::vector<std::unique_ptr<Component, std::default_delete<Component> >, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > > >::~vector() (in /home/student/Pong/main)
+==154282==    by 0x10DEAF: Entity::~Entity() (in /home/student/Pong/main)
+==154282==    by 0x1135AF: std::default_delete<Entity>::operator()(Entity*) const (in /home/student/Pong/main)
+==154282==  Address 0x8294940 is 0 bytes inside a block of size 144 free'd
+==154282==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492CD9D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492CF4F: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10BFE0: Game::~Game() (in /home/student/Pong/main)
+==154282==    by 0x10BEA3: main (main.cpp:47)
+==154282==  Block was alloc'd at
+==154282==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492D07B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492DA8E: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x11AA6F: TextureManager::LoadTexture(char const*) (in /home/student/Pong/main)
+==154282==    by 0x10FA6D: ScoreComponent::ScoreComponent(float, float, int, int, int, int) (in /home/student/Pong/main)
+==154282==    by 0x1120CB: ScoreComponent& Entity::addComponents<ScoreComponent, int, int, int, int, int, int>(int&&, int&&, int&&, int&&, int&&, int&&) (in /home/student/Pong/main)
+==154282==    by 0x10C3E2: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== Invalid read of size 8
+==154282==    at 0x492CE30: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10FDF3: UILabel::~UILabel() (in /home/student/Pong/main)
+==154282==    by 0x10FE3F: UILabel::~UILabel() (in /home/student/Pong/main)
+==154282==    by 0x116ADD: std::default_delete<Component>::operator()(Component*) const (in /home/student/Pong/main)
+==154282==    by 0x114699: std::unique_ptr<Component, std::default_delete<Component> >::~unique_ptr() (in /home/student/Pong/main)
+==154282==    by 0x118C3A: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x1170E4: void std::_Destroy_aux<false>::__destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x114D89: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x112C74: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > >&) (in /home/student/Pong/main)
+==154282==    by 0x110432: std::vector<std::unique_ptr<Component, std::default_delete<Component> >, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > > >::~vector() (in /home/student/Pong/main)
+==154282==    by 0x10DEAF: Entity::~Entity() (in /home/student/Pong/main)
+==154282==    by 0x1135AF: std::default_delete<Entity>::operator()(Entity*) const (in /home/student/Pong/main)
+==154282==  Address 0x24fb7590 is 0 bytes inside a block of size 144 free'd
+==154282==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492CD9D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492CF4F: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10BFE0: Game::~Game() (in /home/student/Pong/main)
+==154282==    by 0x10BEA3: main (main.cpp:47)
+==154282==  Block was alloc'd at
+==154282==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492D07B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492DA8E: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10FEEC: UILabel::setLabelText() (in /home/student/Pong/main)
+==154282==    by 0x10FD7E: UILabel::UILabel(int, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, SDL_Color&) (in /home/student/Pong/main)
+==154282==    by 0x111720: UILabel& Entity::addComponents<UILabel, int, int, char const (&) [5], int, SDL_Color&>(int&&, int&&, char const (&) [5], int&&, SDL_Color&) (in /home/student/Pong/main)
+==154282==    by 0x10C2A7: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== 
+==154282== HEAP SUMMARY:
+==154282==     in use at exit: 396,595 bytes in 3,971 blocks
+==154282==   total heap usage: 304,133 allocs, 300,162 frees, 68,068,409 bytes allocated
+==154282== 
+==154282== 128 bytes in 1 blocks are possibly lost in loss record 2,559 of 2,691
+==154282==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x87E12F4: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87DEC67: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x91D80F4: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x91D5E4E: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D133A: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x8DC97FE: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D48E3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D22A3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x866DF53: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x865F3B8: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x865AA57: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282== 
+==154282== 160 (32 direct, 128 indirect) bytes in 2 blocks are definitely lost in loss record 2,577 of 2,691
+==154282==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x8D196CF: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x91967F7: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x88C51C0: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D837B: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D1EAA: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x866DCDE: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x8657F08: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x865B537: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x865B950: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x861097B: glXCreateContext (in /usr/lib/x86_64-linux-gnu/libGLX.so.0.0.0)
+==154282==    by 0x49C2018: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282== 
+==154282== 160 (32 direct, 128 indirect) bytes in 2 blocks are definitely lost in loss record 2,578 of 2,691
+==154282==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x8D196CF: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x91967F7: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x88C51C0: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D837B: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D1EAA: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x866DCDE: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x8657F08: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x865B537: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x865B950: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x861097B: glXCreateContext (in /usr/lib/x86_64-linux-gnu/libGLX.so.0.0.0)
+==154282==    by 0x49BD8E5: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282== 
+==154282== 176 bytes in 1 blocks are possibly lost in loss record 2,589 of 2,691
+==154282==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x87E12F4: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87E14BA: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87DECC1: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x91D80F4: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x91D5E4E: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D133A: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x8DC97FE: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D48E3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x87D22A3: ??? (in /usr/lib/x86_64-linux-gnu/dri/vmwgfx_dri.so)
+==154282==    by 0x866DF53: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282==    by 0x865F3B8: ??? (in /usr/lib/x86_64-linux-gnu/libGLX_mesa.so.0.0.0)
+==154282== 
+==154282== 41,362 (27,312 direct, 14,050 indirect) bytes in 1 blocks are definitely lost in loss record 2,690 of 2,691
+==154282==    at 0x4848899: malloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x494FCD9: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x489E898: TTF_OpenFontIndexDPIRW (in /usr/lib/x86_64-linux-gnu/libSDL2_ttf-2.0.so.0.18.0)
+==154282==    by 0x10FE85: UILabel::LoadFont() (in /home/student/Pong/main)
+==154282==    by 0x10FD72: UILabel::UILabel(int, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, SDL_Color&) (in /home/student/Pong/main)
+==154282==    by 0x111720: UILabel& Entity::addComponents<UILabel, int, int, char const (&) [5], int, SDL_Color&>(int&&, int&&, char const (&) [5], int&&, SDL_Color&) (in /home/student/Pong/main)
+==154282==    by 0x10C2A7: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== LEAK SUMMARY:
+==154282==    definitely lost: 27,376 bytes in 5 blocks
+==154282==    indirectly lost: 14,306 bytes in 31 blocks
+==154282==      possibly lost: 304 bytes in 2 blocks
+==154282==    still reachable: 352,593 bytes in 3,912 blocks
+==154282==         suppressed: 0 bytes in 0 blocks
+==154282== Reachable blocks (those to which a pointer was found) are not shown.
+==154282== To see them, rerun with: --leak-check=full --show-leak-kinds=all
+==154282== 
+==154282== ERROR SUMMARY: 13 errors from 9 contexts (suppressed: 0 from 0)
+==154282== 
+==154282== 1 errors in context 1 of 9:
+==154282== Invalid read of size 8
+==154282==    at 0x492CE30: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10FDF3: UILabel::~UILabel() (in /home/student/Pong/main)
+==154282==    by 0x10FE3F: UILabel::~UILabel() (in /home/student/Pong/main)
+==154282==    by 0x116ADD: std::default_delete<Component>::operator()(Component*) const (in /home/student/Pong/main)
+==154282==    by 0x114699: std::unique_ptr<Component, std::default_delete<Component> >::~unique_ptr() (in /home/student/Pong/main)
+==154282==    by 0x118C3A: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x1170E4: void std::_Destroy_aux<false>::__destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x114D89: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x112C74: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > >&) (in /home/student/Pong/main)
+==154282==    by 0x110432: std::vector<std::unique_ptr<Component, std::default_delete<Component> >, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > > >::~vector() (in /home/student/Pong/main)
+==154282==    by 0x10DEAF: Entity::~Entity() (in /home/student/Pong/main)
+==154282==    by 0x1135AF: std::default_delete<Entity>::operator()(Entity*) const (in /home/student/Pong/main)
+==154282==  Address 0x24fb7590 is 0 bytes inside a block of size 144 free'd
+==154282==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492CD9D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492CF4F: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10BFE0: Game::~Game() (in /home/student/Pong/main)
+==154282==    by 0x10BEA3: main (main.cpp:47)
+==154282==  Block was alloc'd at
+==154282==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492D07B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492DA8E: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10FEEC: UILabel::setLabelText() (in /home/student/Pong/main)
+==154282==    by 0x10FD7E: UILabel::UILabel(int, int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, int, SDL_Color&) (in /home/student/Pong/main)
+==154282==    by 0x111720: UILabel& Entity::addComponents<UILabel, int, int, char const (&) [5], int, SDL_Color&>(int&&, int&&, char const (&) [5], int&&, SDL_Color&) (in /home/student/Pong/main)
+==154282==    by 0x10C2A7: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== 
+==154282== 1 errors in context 2 of 9:
+==154282== Conditional jump or move depends on uninitialised value(s)
+==154282==    at 0x10D1CF: checkCollisions() (in /home/student/Pong/main)
+==154282==    by 0x10D67C: Game::update(float) (in /home/student/Pong/main)
+==154282==    by 0x10BD2C: main (main.cpp:26)
+==154282==  Uninitialised value was created by a heap allocation
+==154282==    at 0x4849013: operator new(unsigned long) (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x1123CF: ColliderComponent& Entity::addComponents<ColliderComponent, char const (&) [5]>(char const (&) [5]) (in /home/student/Pong/main)
+==154282==    by 0x10C613: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== 
+==154282== 2 errors in context 3 of 9:
+==154282== Invalid read of size 8
+==154282==    at 0x492CE30: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10FB17: ScoreComponent::~ScoreComponent() (in /home/student/Pong/main)
+==154282==    by 0x10FB43: ScoreComponent::~ScoreComponent() (in /home/student/Pong/main)
+==154282==    by 0x116ADD: std::default_delete<Component>::operator()(Component*) const (in /home/student/Pong/main)
+==154282==    by 0x114699: std::unique_ptr<Component, std::default_delete<Component> >::~unique_ptr() (in /home/student/Pong/main)
+==154282==    by 0x118C3A: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x1170E4: void std::_Destroy_aux<false>::__destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x114D89: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x112C74: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > >&) (in /home/student/Pong/main)
+==154282==    by 0x110432: std::vector<std::unique_ptr<Component, std::default_delete<Component> >, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > > >::~vector() (in /home/student/Pong/main)
+==154282==    by 0x10DEAF: Entity::~Entity() (in /home/student/Pong/main)
+==154282==    by 0x1135AF: std::default_delete<Entity>::operator()(Entity*) const (in /home/student/Pong/main)
+==154282==  Address 0x8294940 is 0 bytes inside a block of size 144 free'd
+==154282==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492CD9D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492CF4F: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10BFE0: Game::~Game() (in /home/student/Pong/main)
+==154282==    by 0x10BEA3: main (main.cpp:47)
+==154282==  Block was alloc'd at
+==154282==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492D07B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492DA8E: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x11AA6F: TextureManager::LoadTexture(char const*) (in /home/student/Pong/main)
+==154282==    by 0x10FA6D: ScoreComponent::ScoreComponent(float, float, int, int, int, int) (in /home/student/Pong/main)
+==154282==    by 0x1120CB: ScoreComponent& Entity::addComponents<ScoreComponent, int, int, int, int, int, int>(int&&, int&&, int&&, int&&, int&&, int&&) (in /home/student/Pong/main)
+==154282==    by 0x10C3E2: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== 
+==154282== 4 errors in context 4 of 9:
+==154282== Invalid read of size 8
+==154282==    at 0x492CE30: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10EA21: SpriteComponent::~SpriteComponent() (in /home/student/Pong/main)
+==154282==    by 0x10EA5D: SpriteComponent::~SpriteComponent() (in /home/student/Pong/main)
+==154282==    by 0x116ADD: std::default_delete<Component>::operator()(Component*) const (in /home/student/Pong/main)
+==154282==    by 0x114699: std::unique_ptr<Component, std::default_delete<Component> >::~unique_ptr() (in /home/student/Pong/main)
+==154282==    by 0x118C3A: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x1170E4: void std::_Destroy_aux<false>::__destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x114D89: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*>(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*) (in /home/student/Pong/main)
+==154282==    by 0x112C74: void std::_Destroy<std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> > >(std::unique_ptr<Component, std::default_delete<Component> >*, std::unique_ptr<Component, std::default_delete<Component> >*, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > >&) (in /home/student/Pong/main)
+==154282==    by 0x110432: std::vector<std::unique_ptr<Component, std::default_delete<Component> >, std::allocator<std::unique_ptr<Component, std::default_delete<Component> > > >::~vector() (in /home/student/Pong/main)
+==154282==    by 0x10DEAF: Entity::~Entity() (in /home/student/Pong/main)
+==154282==    by 0x1135AF: std::default_delete<Entity>::operator()(Entity*) const (in /home/student/Pong/main)
+==154282==  Address 0x1358c050 is 0 bytes inside a block of size 144 free'd
+==154282==    at 0x484B27F: free (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492CD9D: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492CF4F: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x10BFE0: Game::~Game() (in /home/student/Pong/main)
+==154282==    by 0x10BEA3: main (main.cpp:47)
+==154282==  Block was alloc'd at
+==154282==    at 0x484DA83: calloc (in /usr/libexec/valgrind/vgpreload_memcheck-amd64-linux.so)
+==154282==    by 0x492D07B: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x492DA8E: ??? (in /usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2)
+==154282==    by 0x11AA6F: TextureManager::LoadTexture(char const*) (in /home/student/Pong/main)
+==154282==    by 0x10E8E4: SpriteComponent::SpriteComponent(int, int, bool, bool) (in /home/student/Pong/main)
+==154282==    by 0x111B4A: SpriteComponent& Entity::addComponents<SpriteComponent, int, int, bool, bool>(int&&, int&&, bool&&, bool&&) (in /home/student/Pong/main)
+==154282==    by 0x10C33F: Game::init(char const*, int, int, int, int, bool) (in /home/student/Pong/main)
+==154282==    by 0x10BC7F: main (main.cpp:16)
+==154282== 
+==154282== ERROR SUMMARY: 13 errors from 9 contexts (suppressed: 0 from 0)

@@ -24,8 +24,8 @@ public:
     int animIndex = 0;
     std::map<const char *, Animation> animations;
     SDL_RendererFlip spriteFlip = SDL_FLIP_NONE;
-
-    SpriteComponent() = default;
+    
+    SpriteComponent() : texture(nullptr){};
     SpriteComponent(int srcRectX, int srcRectY, bool animation, bool repeatY)
     {
         texture = TextureManager::LoadTexture("assets/pong_spritesheet.png");
@@ -45,7 +45,8 @@ public:
     }
     ~SpriteComponent()
     {
-        SDL_DestroyTexture(texture);
+        if (texture)
+            SDL_DestroyTexture(texture);
     }
 
     void setSrcRect(int srcX, int srcY)
